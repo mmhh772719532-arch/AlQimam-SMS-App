@@ -16,21 +16,24 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      - name: Install Cordova
-        run: npm install -g cordova
+      - name: Install Cordova and Gradle
+        run: |
+          npm install -g cordova
+          sudo apt-get update
+          sudo apt-get install -y gradle
 
       - name: Add Android Platform
-        run: cordova platform add android
+        run: cordova platform add android --nosave
 
       - name: Build APK
-        run: cordova build android
+        run: cordova build android --debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
