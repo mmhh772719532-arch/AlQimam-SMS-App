@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الرسوم والإشعارات - مدارس القمم الأهلية V4.3 Ultimate</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7fc; color: #1e293b; padding: 20px; }
+        .app-container { max-width: 1600px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08); overflow: hidden; padding: 20px 25px 35px; }
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding-bottom: 20px; border-bottom: 2px solid #eef2f6; margin-bottom: 25px; }
+        .header h1 { font-size: 26px; font-weight: 700; color: #0f2b4b; }
+        .header h1 i { color: #2a7de1; margin-left: 12px; }
+        .header .school-name { font-size: 16px; color: #475569; background: #f1f5f9; padding: 8px 18px; border-radius: 40px; }
+        .tabs-wrapper { background: #f8fafc; border-radius: 60px; padding: 6px; margin-bottom: 30px; border: 1px solid #e9edf2; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 4px; }
+        .tab-btn { background: transparent; border: none; padding: 10px 22px; font-size: 14px; font-weight: 600; color: #64748b; border-radius: 40px; cursor: pointer; transition: all 0.25s ease; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; flex: 0 1 auto; }
+        .tab-btn i { font-size: 16px; width: 20px; text-align: center; }
+        .tab-btn:hover { background: #eef2f6; color: #1e293b; }
+        .tab-btn.active { background: #1e3a5f; color: white; box-shadow: 0 6px 16px rgba(26, 67, 113, 0.25); transform: scale(1.02); }
+        .tab-content { display: none; animation: fade 0.25s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fade { from { opacity: 0.3; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 18px; margin: 25px 0 30px; }
+        .stat-card { background: white; padding: 20px 18px; border-radius: 24px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); border: 1px solid #eef2f6; transition: 0.15s; }
+        .stat-card:hover { border-color: #cbd5e1; }
+        .stat-card .num { font-size: 32px; font-weight: 700; color: #0f2b4b; }
+        .stat-card .label { font-size: 14px; color: #64748b; margin-top: 6px; }
+        .stat-card i { font-size: 20px; color: #2a7de1; margin-left: 10px; }
+        .table-wrap { overflow-x: auto; margin: 18px 0; border-radius: 20px; border: 1px solid #e9edf2; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 800px; }
+        th { background: #f8fafc; color: #1e293b; font-weight: 600; padding: 14px 12px; border-bottom: 2px solid #e2e8f0; text-align: center; }
+        td { padding: 12px; border-bottom: 1px solid #ecf1f6; text-align: center; }
+        tr:hover td { background: #fafcff; }
+        .badge { background: #dbeafe; color: #1e4a7a; padding: 4px 12px; border-radius: 40px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-info { background: #e0f2fe; color: #0369a1; }
+        .btn { background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 40px; font-size: 13px; font-weight: 500; color: #1e293b; cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: #1e3a5f; color: white; } .btn-primary:hover { background: #143049; }
+        .btn-success { background: #0b7e4b; color: white; } .btn-success:hover { background: #09633b; }
+        .btn-danger { background: #b91c1c; color: white; }
+        .btn-outline { background: transparent; border: 1px solid #cbd5e1; }
+        .btn-warning { background: #d97706; color: white; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+        .flex { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+        .flex-between { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+        .input, select, textarea { background: white; border: 1px solid #d1d9e6; padding: 10px 15px; border-radius: 40px; font-size: 14px; outline: none; transition: 0.15s; width: 100%; max-width: 280px; }
+        .input:focus, select:focus, textarea:focus { border-color: #1e3a5f; box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1); }
+        textarea { border-radius: 20px; max-width: 100%; min-height: 120px; direction: rtl; line-height: 2; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .search-box { max-width: 350px; }
+        .mt-2 { margin-top: 16px; } .mb-2 { margin-bottom: 16px; } .mt-1 { margin-top: 8px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .card-panel { background: #f9fbfd; border-radius: 24px; padding: 24px; border: 1px solid #eef2f6; }
+        .label-sm { font-size: 13px; color: #475569; }
+        .variable-hint { display: inline-block; background: #eef2ff; color: #1e3a5f; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin: 2px 0; direction: ltr; cursor: pointer; }
+        .message-preview-box { background: #f8fafc; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; min-height: 100px; white-space: pre-wrap; word-wrap: break-word; font-size: 15px; line-height: 2.2; direction: rtl; }
+        .logo-preview { max-width: 100px; max-height: 60px; border-radius: 8px; border: 1px solid #ddd; padding: 4px; object-fit: contain; }
+        .file-upload-btn { position: relative; overflow: hidden; display: inline-block; }
+        .file-upload-btn input[type="file"] { position: absolute; right: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        
+        #toast-container { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
+        .toast { padding: 12px 20px; border-radius: 12px; color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease forwards; opacity: 0; transform: translateX(-100%); }
+        .toast.success { background-color: #0b7e4b; } .toast.error { background-color: #b91c1c; } .toast.warning { background-color: #d97706; } .toast.info { background-color: #1e3a5f; }
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 24px; width: 90%; max-width: 650px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .close-modal { cursor: pointer; color: #64748b; font-size: 20px; }
+        
+        .progress-bar { background: #e9edf2; border-radius: 40px; height: 12px; margin: 12px 0; width: 100%; overflow: hidden; }
+        .progress-fill { background: #0b7e4b; height: 100%; width: 0%; transition: width 0.3s ease; }
+
+        @media print {
+            @page { size: A3 landscape; margin: 10mm; }
+            .no-print { display: none !important; }
+            body { background: white; padding: 0; font-size: 12px; }
+            .app-container { box-shadow: none; padding: 0; margin: 0; width: 100%; max-width: 100%; border-radius: 0; }
+            .print-report table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            .print-report th, .print-report td { border: 1px solid #333; padding: 8px; text-align: center; }
+            .print-report { display: block !important; padding: 20px; direction: rtl; }
+            .print-report .footer { margin-top: 30px; text-align: center; font-size: 12px; }
+            .tab-content { display: none !important; }
+        }
+        .print-report { display: none; }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+
+    <div class="app-container" id="app">
+        <div class="header no-print">
+            <h1><i class="fas fa-graduation-cap"></i> نظام إدارة الرسوم والإشعارات - V4.3 Ultimate</h1>
+            <span class="school-name" id="headerSchoolName"><i class="fas fa-school"></i> مدارس القمم الأهلية</span>
+        </div>
+
+        <div class="tabs-wrapper no-print" id="tabHeaders">
+            <button class="tab-btn active" data-tab="dashboard"><i class="fas fa-chart-pie"></i> الرئيسية</button>
+            <button class="tab-btn" data-tab="import"><i class="fas fa-file-import"></i> استيراد Excel</button>
+            <button class="tab-btn" data-tab="students"><i class="fas fa-users"></i> الطلاب</button>
+            <button class="tab-btn" data-tab="search"><i class="fas fa-search"></i> البحث المتقدم</button>
+            <button class="tab-btn" data-tab="messages"><i class="fas fa-comment-dots"></i> الرسائل والإشعارات</button>
+            <button class="tab-btn" data-tab="bulk_campaigns"><i class="fas fa-paper-plane"></i> الإرسال الجماعي (API)</button>
+            <button class="tab-btn" data-tab="reports"><i class="fas fa-chart-bar"></i> التقارير</button>
+            <button class="tab-btn" data-tab="logs"><i class="fas fa-history"></i> سجل العمليات</button>
+            <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> الإعدادات والمزودين</button>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="tab-content active no-print">
+            <h2 class="mb-2"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</h2>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><i class="fas fa-user-graduate"></i><div class="num" id="statStudents">0</div><div class="label">إجمالي الطلاب</div></div>
+                <div class="stat-card"><i class="fas fa-money-bill-wave"></i><div class="num" id="statTotal">0</div><div class="label">إجمالي الرسوم</div></div>
+                <div class="stat-card"><i class="fas fa-check-circle"></i><div class="num" id="statPaid">0</div><div class="label">إجمالي المدفوع</div></div>
+                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><div class="num" id="statRemain">0</div><div class="label">إجمالي المتبقي</div></div>
+                <div class="stat-card"><i class="fas fa-user-check"></i><div class="num" id="statFullyPaid">0</div><div class="label">مسددون بالكامل</div></div>
+                <div class="stat-card"><i class="fas fa-user-clock"></i><div class="num" id="statDelayed">0</div><div class="label">متأخرون</div></div>
+                <div class="stat-card"><i class="fas fa-paper-plane"></i><div class="num" id="statNotified">0</div><div class="label">تم إشعارهم</div></div>
+                <div class="stat-card"><i class="fas fa-user-slash"></i><div class="num" id="statNotNotified">0</div><div class="label">لم يتم إشعارهم</div></div>
+                <div class="stat-card"><i class="fab fa-whatsapp"></i><div class="num" id="statWaSent">0</div><div class="label">رسائل WhatsApp (مقبولة)</div></div>
+                <div class="stat-card"><i class="fas fa-sms"></i><div class="num" id="statSmsSent">0</div><div class="label">رسائل SMS (مقبولة)</div></div>
+            </div>
+            <div class="card-panel"><i class="fas fa-info-circle"></i> تنبيه أمني: حالات الإرسال (sent = تم قبول الرسالة من API، delivered = غير متاح بدون Webhook).</div>
+        </div>
+
+        <!-- IMPORT -->
+        <div id="import" class="tab-content no-print">
+            <h2><i class="fas fa-file-excel"></i> الاستيراد الذكي والمطابقة من Excel</h2>
+            <div class="card-panel mt-2">
+                <div class="flex mb-2">
+                    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="input" style="max-width:350px;">
+                    <select class="input" id="importMode" style="max-width:200px;">
+                        <option value="merge">دمج وتحديث (بناءً على ID / الهاتف)</option>
+                        <option value="replace">استبدال كامل للبيانات (مع نسخة احتياطية تلقائية)</option>
+                    </select>
+                    <button class="btn btn-primary" id="analyzeExcelBtn"><i class="fas fa-search"></i> تحليل الملف ومطابقة الأعمدة</button>
+                </div>
+                <div id="importStatus" class="label-sm"></div>
+            </div>
+        </div>
+
+        <!-- STUDENTS -->
+        <div id="students" class="tab-content no-print">
+            <div class="flex-between mb-2">
+                <h2><i class="fas fa-list"></i> قائمة الطلاب</h2>
+                <div class="flex">
+                    <input class="input search-box" id="studentSearch" placeholder="بحث سريع بالاسم، الهاتف، الكود...">
+                    <button class="btn btn-outline" id="refreshTable"><i class="fas fa-sync"></i> تحديث</button>
+                </div>
+            </div>
+            <div class="table-wrap" id="studentsTableWrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllStudents"></th>
+                            <th>كود (ID)</th>
+                            <th>الاسم</th>
+                            <th>ولي الأمر</th>
+                            <th>الهاتف</th>
+                            <th>الصف</th>
+                            <th>الإجمالي</th>
+                            <th>المدفوع</th>
+                            <th>المتبقي</th>
+                            <th>الحالة</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SEARCH -->
+        <div id="search" class="tab-content no-print">
+            <h2><i class="fas fa-search"></i> البحث المتقدم الشامل</h2>
+            <div class="grid-2 mt-2">
+                <input class="input" id="advName" placeholder="اسم الطالب">
+                <input class="input" id="advGuardian" placeholder="ولي الأمر">
+                <input class="input" id="advPhone" placeholder="رقم الهاتف">
+                <input class="input" id="advClass" placeholder="الصف">
+                <input class="input" id="advMonth" placeholder="الشهر">
+                <input class="input" id="advYear" placeholder="السنة">
+                <select class="input" id="advStatus">
+                    <option value="all">حالة السداد: الكل</option>
+                    <option value="fully_paid">مسدد بالكامل</option>
+                    <option value="delayed">متأخر</option>
+                </select>
+                <select class="input" id="advNotifStatus">
+                    <option value="all">حالة الإشعار: الكل</option>
+                    <option value="notified">تم إشعارهم</option>
+                    <option value="not_notified">لم يتم إشعارهم</option>
+                </select>
+                <select class="input" id="advPhoneStatus">
+                    <option value="all">صلاحية الهاتف: الكل</option>
+                    <option value="valid">أرقام صالحة</option>
+                    <option value="invalid">أرقام غير صالحة</option>
+                </select>
+            </div>
+            <div class="mt-2 flex">
+                <button class="btn btn-primary" id="advSearchBtn"><i class="fas fa-filter"></i> تطبيق البحث</button>
+                <button class="btn btn-outline" id="advClearBtn"><i class="fas fa-undo"></i> إعادة ضبط</button>
+            </div>
+            <div class="table-wrap mt-2">
+                <table>
+                    <thead><tr><th>كود</th><th>الاسم</th><th>ولي الأمر</th><th>الهاتف</th><th>الصف</th><th>المتبقي</th><th>النسبة</th><th>الحالة</th></tr></thead>
+                    <tbody id="advResultsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MESSAGES -->
+        <div id="messages" class="tab-content no-print">
+            <h2><i class="fas fa-comment-dots"></i> محرر الرسائل وقوالب الإشعار</h2>
+            <div class="card-panel mb-2" style="background:#f0f4ff;">
+                <div class="flex" style="gap:6px; flex-wrap:wrap;" id="variableChips">
+                    <span class="variable-hint" data-var="{اسم_الطالب}">{اسم_الطالب}</span>
+                    <span class="variable-hint" data-var="{ولي_الأمر}">{ولي_الأمر}</span>
+                    <span class="variable-hint" data-var="{الصف}">{الصف}</span>
+                    <span class="variable-hint" data-var="{المبلغ}">{المبلغ}</span>
+                    <span class="variable-hint" data-var="{المدفوع}">{المدفوع}</span>
+                    <span class="variable-hint" data-var="{المتبقي}">{المتبقي}</span>
+                    <span class="variable-hint" data-var="{نسبة_السداد}">{نسبة_السداد}</span>
+                    <span class="variable-hint" data-var="{الشهر}">{الشهر}</span>
+                    <span class="variable-hint" data-var="{السنة}">{السنة}</span>
+                    <span class="variable-hint" data-var="{اسم_المحاسب}">{اسم_المحاسب}</span>
+                    <span class="variable-hint" data-var="{اسم_أمين_الصندوق}">{اسم_أمين_الصندوق}</span>
+                    <span class="variable-hint" data-var="{اسم_المدرسة}">{اسم_المدرسة}</span>
+                    <span class="variable-hint" data-var="{تاريخ_اليوم}">{تاريخ_اليوم}</span>
+                    <span class="variable-hint" data-var="{رقم_الطالب}">{رقم_الطالب}</span>
+                </div>
+                <div class="label-sm mt-1">👆 انقر على أي متغير لإضافته لنص الرسالة فوراً</div>
+            </div>
+
+            <div class="grid-2 mt-2">
+                <div>
+                    <label class="label-sm">اختر قالباً جاهزاً</label>
+                    <select class="input" id="templateSelect" style="max-width:100%; margin-bottom:10px;">
+                        <option value="الأخ ولي أمر الطالب {اسم_الطالب} المحترم&#10;&#10;يسر إدارة الحسابات في {اسم_المدرسة} إشعاركم بتسديد القسط المتبقي على الطالب مبلغ {المتبقي} ريال لشهر {الشهر} سنة {السنة}.&#10;&#10;وفقكم الله.&#10;&#10;{اسم_المحاسب}&#10;{اسم_أمين_الصندوق}">قالب الحسابات الرسمي</option>
+                        <option value="الأخ ولي أمر الطالب {اسم_الطالب} المحترم&#10;&#10;نحيطكم علماً بأن الرسوم الدراسية المستحقة لابنكم في الصف {الصف} تبلغ {المتبقي} ريال. نأمل التفضل بالسداد.&#10;&#10;{اسم_المحاسب}">قالب تذكير مختصر</option>
+                    </select>
+                    <label class="label-sm">نص الرسالة</label>
+                    <textarea class="input" id="messageEditor" rows="7" style="max-width:100%;"></textarea>
+                </div>
+                <div>
+                    <label class="label-sm">معاينة حقيقية لرسالة أول طالب</label>
+                    <div class="message-preview-box" id="templatePreview">⚠️ لا توجد بيانات للمعاينة</div>
+                    <div class="mt-2 flex">
+                        <button class="btn btn-outline" id="openManualWaBtn"><i class="fab fa-whatsapp"></i> فتح واتساب يدوي (احتياطي فقط)</button>
+                        <button class="btn btn-warning" id="openTestModalBtn"><i class="fas fa-vial"></i> رسالة اختبار لرقم واحد</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BULK CAMPAIGNS (API READY) -->
+        <div id="bulk_campaigns" class="tab-content no-print">
+            <h2><i class="fas fa-paper-plane"></i> نظام الإرسال الجماعي الحقيقي (API & Proxy)</h2>
+            <div class="card-panel mt-2">
+                <h4>إعدادات وتصفية الحملة</h4>
+                <div class="grid-3 mt-2">
+                    <div>
+                        <label class="label-sm">قناة الإرسال</label>
+                        <select class="input" id="bulkChannel" style="max-width:100%;">
+                            <option value="whatsapp">WhatsApp (Cloud API / Template)</option>
+                            <option value="sms">SMS (Gateway API)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-sm">فلتر المستلمين</label>
+                        <select class="input" id="bulkFilterType" style="max-width:100%;">
+                            <option value="all">جميع الطلاب</option>
+                            <option value="unpaid">الطلاب غير المسددين</option>
+                            <option value="delayed">الطلاب المتأخرون</option>
+                            <option value="not_notified">الذين لم يتم إشعارهم</option>
+                            <option value="manual">الطلاب المحددون يدويًا (من جدول الطلاب)</option>
+                            <option value="class">حسب الصف</option>
+                            <option value="amount">المتبقي > 50000</option>
+                            <option value="percent">حسب نسبة السداد</option>
+                        </select>
+                    </div>
+                    <div id="bulkSubFilterContainer" style="display:none;">
+                        <label class="label-sm" id="bulkSubFilterLabel">قيمة التصفية</label>
+                        <input class="input" id="bulkSubFilterVal" placeholder="أدخل القيمة..." style="max-width:100%;">
+                    </div>
+                </div>
+                <div class="flex mt-2" style="align-items:center; gap:20px;">
+                    <label><input type="checkbox" id="bulkSkipNotified" checked> تخطي الطلاب الذين تم إشعارهم مسبقاً</label>
+                    <label><input type="checkbox" id="bulkAllowResend"> السماح بإعادة الإرسال</label>
+                    <button class="btn btn-primary" id="openCampaignPreviewModalBtn"><i class="fas fa-check-circle"></i> معاينة وتجهيز الحملة</button>
+                </div>
+            </div>
+
+            <!-- Active Campaign Execution Dashboard -->
+            <div class="card-panel mt-2" id="bulkActivePanel" style="display:none; background:#f0fdf4; border-color:#86efac;">
+                <div class="flex-between">
+                    <h4>🚀 حالة الحملة النشطة (<span id="activeCampChannelName">WhatsApp</span>) - ID: <span id="activeCampId">---</span></h4>
+                    <span id="activeCampStatusBadge" class="badge badge-warning">قيد الانتظار</span>
+                </div>
+                <div class="grid-3 mt-2">
+                    <div><strong>إجمالي المستلمين:</strong> <span id="lblTotalRec">0</span></div>
+                    <div><strong>تمت المعالجة (Sent):</strong> <span id="lblSentRec">0</span></div>
+                    <div><strong>فشل الإرسال:</strong> <span id="lblFailRec">0</span></div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="bulkProgressFill"></div></div>
+                <div class="flex mt-2">
+                    <button class="btn btn-warning" id="pauseCampBtn"><i class="fas fa-pause"></i> إيقاف مؤقت</button>
+                    <button class="btn btn-success" id="resumeCampBtn" style="display:none;"><i class="fas fa-play"></i> استكمال</button>
+                    <button class="btn btn-danger" id="cancelCampBtn"><i class="fas fa-stop"></i> إيقاف الحملة</button>
+                    <button class="btn btn-primary" id="retryFailedBtn" style="display:none;"><i class="fas fa-redo"></i> إعادة إرسال الفاشلة فقط</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTS -->
+        <div id="reports" class="tab-content no-print">
+            <h2><i class="fas fa-chart-bar"></i> التقارير والتحليلات الشاملة</h2>
+            <div class="stats-grid mt-2" id="repStatsGrid">
+                <div class="stat-card"><div class="num" id="repStTotal">0</div><div class="label">إجمالي الطلاب</div></div>
+                <div class="stat-card"><div class="num" id="repTotFees">0</div><div class="label">إجمالي الرسوم</div></div>
+                <div class="stat-card"><div class="num" id="repTotPaid">0</div><div class="label">إجمالي المدفوع</div></div>
+                <div class="stat-card"><div class="num" id="repTotRemain">0</div><div class="label">إجمالي المتبقي</div></div>
+                <div class="stat-card"><div class="num" id="repCollectionRate">0%</div><div class="label">نسبة التحصيل العامة</div></div>
+                <div class="stat-card"><div class="num" id="repFullyPaidCount">0</div><div class="label">المسددون بالكامل</div></div>
+                <div class="stat-card"><div class="num" id="repDelayedCount">0</div><div class="label">المتأخرون</div></div>
+            </div>
+            <div class="flex mt-2 no-print">
+                <select class="input" id="reportTypeSelect" style="max-width:250px;">
+                    <option value="all">1. جميع الطلاب</option>
+                    <option value="delayed">2. الطلاب المتأخرون</option>
+                    <option value="fully_paid">3. المسددون بالكامل</option>
+                    <option value="class">4. حسب الصف</option>
+                    <option value="month">5. حسب الشهر</option>
+                    <option value="amount">6. حسب المبلغ</option>
+                    <option value="percent">7. حسب نسبة السداد</option>
+                    <option value="not_notified">8. الذين لم يتم إشعارهم</option>
+                    <option value="notified">9. الذين تم إشعارهم</option>
+                    <option value="invalid_phones">10. أرقام الهاتف غير الصالحة</option>
+                </select>
+                <input class="input" id="reportSubVal" placeholder="قيمة التصفية (إن وجدت)..." style="max-width:180px; display:none;">
+                <button class="btn btn-primary" id="generateReportBtn"><i class="fas fa-eye"></i> عرض التقرير</button>
+                <button class="btn btn-success" id="exportExcelBtn"><i class="fas fa-file-excel"></i> تصدير Excel</button>
+                <button class="btn btn-danger" id="printReportBtn"><i class="fas fa-print"></i> طباعة تقرير A3 احترافي</button>
+            </div>
+            <div class="table-wrap mt-2">
+                <table>
+                    <thead><tr><th>م</th><th>كود</th><th>اسم الطالب</th><th>ولي الأمر</th><th>الهاتف</th><th>الصف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>النسبة</th><th>واتساب</th><th>SMS</th><th>تم الإشعار</th></tr></thead>
+                    <tbody id="reportBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PRINT AREA (A3 Landscape) -->
+        <div class="print-report" id="printReportArea">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #333; padding-bottom:15px; margin-bottom:20px;">
+                <div id="printLogoContainer"></div>
+                <div style="text-align:center;">
+                    <h2 style="font-size:24px;" id="printSchoolTitle">مدارس القمم الأهلية</h2>
+                    <p style="font-size:16px;" id="printReportTitle">تقرير الطلاب والرسوم الشامل</p>
+                    <p style="font-size:13px; color:#555;">تاريخ التقرير: <span id="printReportDate"></span></p>
+                </div>
+                <div style="font-size:12px; text-align:left;">
+                    <p>المحاسب: <span id="printAccName"></span></p>
+                    <p>أمين الصندوق: <span id="printTreasName"></span></p>
+                </div>
+            </div>
+            <table>
+                <thead><tr><th>م</th><th>كود</th><th>اسم الطالب</th><th>ولي الأمر</th><th>الهاتف</th><th>الصف</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>النسبة</th><th>واتساب</th><th>SMS</th><th>الحالة</th></tr></thead>
+                <tbody id="printReportBody"></tbody>
+            </table>
+            <div class="footer" style="margin-top:40px; display:flex; justify-content:space-between; font-size:14px; border-top:1px solid #ccc; padding-top:15px;">
+                <div>توقيع المحاسب: ........................</div>
+                <div>توقيع أمين الصندوق: ........................</div>
+                <div>ختم الإدارة: ........................</div>
+            </div>
+        </div>
+
+        <!-- LOGS -->
+        <div id="logs" class="tab-content no-print">
+            <div class="flex-between mb-2">
+                <h2><i class="fas fa-history"></i> سجل العمليات والإشعارات (API Logs)</h2>
+                <button class="btn btn-outline" id="clearLogsBtn"><i class="fas fa-trash"></i> مسح السجل</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>كود الحملة</th><th>كود الطالب</th><th>اسم الطالب</th><th>الهاتف</th><th>القناة</th><th>الحالة</th><th>التاريخ والوقت</th><th>رمز/سبب الاستجابة</th></tr></thead>
+                    <tbody id="logsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="settings" class="tab-content no-print">
+            <h2><i class="fas fa-cog"></i> إعدادات النظام وربط المزودين (Backend Proxy & API)</h2>
+            <div class="grid-2 mt-2">
+                <div><label class="label-sm">اسم المدرسة</label><input class="input" id="setSchoolName"></div>
+                <div><label class="label-sm">اسم المحاسب</label><input class="input" id="setAccountant"></div>
+                <div><label class="label-sm">اسم أمين الصندوق</label><input class="input" id="setTreasurer"></div>
+                <div><label class="label-sm">رمز الدولة الافتراضي للهاتف (مثل +967)</label><input class="input" id="setDefaultCountryCode" placeholder="+967"></div>
+                <div>
+                    <label class="label-sm">شعار المدرسة (للتقارير والطباعة)</label>
+                    <div class="flex">
+                        <button class="btn btn-outline file-upload-btn"><i class="fas fa-upload"></i> رفع شعار<input type="file" id="setLogoUpload" accept="image/*"></button>
+                        <button class="btn btn-outline" id="setRemoveLogoBtn"><i class="fas fa-trash"></i> إزالة</button>
+                    </div>
+                    <div class="mt-1"><img id="setLogoPreview" class="logo-preview" style="display:none;" alt="شعار المدرسة"></div>
+                </div>
+            </div>
+
+            <hr style="margin:25px 0; border:0; border-top:1px solid #e2e8f0;">
+
+            <!-- Backend Proxy & Security Config -->
+            <div class="card-panel" style="background:#fffbeb; border-color:#fde68a; margin-bottom:20px;">
+                <h4><i class="fas fa-shield-alt"></i> إعدادات Backend Proxy (آمن للإنتاج)</h4>
+                <p style="font-size:12px; color:#92400e; margin-top:5px;">تنبيه: تخزين Access Token داخل localStorage غير آمن. يفضل توجيه الطلبات عبر Backend Proxy خاص بك.</p>
+                <div class="grid-2 mt-2">
+                    <div><label class="label-sm">Backend Proxy URL</label><input class="input" id="setBackendUrl" placeholder="https://your-backend-proxy.com/api"></div>
+                    <div><label class="label-sm">وضع الاختبار (Mock Provider)</label><select class="input" id="setTestMode"><option value="false">معطل (إرسال حقيقي عبر API)</option><option value="true">مفعل (وضع الاختبار محلياً)</option></select></div>
+                </div>
+            </div>
+
+            <!-- WhatsApp API Configuration Panel -->
+            <div class="card-panel" style="background:#f0fdf4; border-color:#86efac; margin-bottom:20px;">
+                <h4><i class="fab fa-whatsapp"></i> إعدادات WhatsApp Cloud API / Template</h4>
+                <div class="grid-2 mt-2">
+                    <div><label class="label-sm">Phone Number ID</label><input class="input" id="setWaPhoneId" placeholder="أدخل Phone ID"></div>
+                    <div><label class="label-sm">Business Account ID</label><input class="input" id="setWaBizId" placeholder="أدخل Business ID"></div>
+                    <div><label class="label-sm">Access Token (لا يُحفظ في المتصفح بأمان إنتاجي)</label><input class="input" type="password" id="setWaToken" placeholder="أدخل Access Token"></div>
+                    <div><label class="label-sm">Template Name (اختياري للإرسال الاستباقي)</label><input class="input" id="setWaTemplate" placeholder="اسم القالب المعتمد"></div>
+                    <div><label class="label-sm">Language Code</label><input class="input" id="setWaLang" value="ar"></div>
+                </div>
+                <div class="mt-2 flex">
+                    <button class="btn btn-success" id="testWaConnBtn"><i class="fas fa-plug"></i> اختبار اتصال WhatsApp (حقيقي)</button>
+                </div>
+            </div>
+
+            <!-- SMS API Configuration Panel -->
+            <div class="card-panel" style="background:#eff6ff; border-color:#bfdbfe; margin-bottom:20px;">
+                <h4><i class="fas fa-sms"></i> إعدادات بوابة SMS (SMSProvider)</h4>
+                <div class="grid-2 mt-2">
+                    <div><label class="label-sm">اسم المزود (Provider)</label><input class="input" id="setSmsProvider" placeholder="مثال: Custom Gateway"></div>
+                    <div><label class="label-sm">API URL</label><input class="input" id="setSmsUrl" placeholder="https://api.sms-provider.com/v1/send"></div>
+                    <div><label class="label-sm">API Key / Token</label><input class="input" type="password" id="setSmsKey" placeholder="رمز المصادقة"></div>
+                    <div><label class="label-sm">Sender ID</label><input class="input" id="setSmsSender" placeholder="اسم المرسل المعتمد"></div>
+                </div>
+                <div class="mt-2 flex">
+                    <button class="btn btn-primary" id="testSmsConnBtn"><i class="fas fa-plug"></i> اختبار اتصال SMS (حقيقي)</button>
+                </div>
+            </div>
+
+            <!-- Queue Performance Settings -->
+            <div class="card-panel" style="background:#fdf4ff; border-color:#f5d0fe; margin-bottom:20px;">
+                <h4><i class="fas fa-tachometer-alt"></i> إعدادات الدفعات والسرعة (Batch Queue)</h4>
+                <div class="grid-2 mt-2">
+                    <div><label class="label-sm">عدد الرسائل في الدفعة (Batch Size)</label><input class="input" type="number" id="setBatchSize" value="5"></div>
+                    <div><label class="label-sm">الفاصل الزمني بين الرسائل (ms)</label><input class="input" type="number" id="setBatchDelay" value="1000"></div>
+                </div>
+            </div>
+
+            <div class="mt-2 flex">
+                <button class="btn btn-primary" id="saveSettingsBtn"><i class="fas fa-save"></i> حفظ جميع الإعدادات</button>
+                <button class="btn btn-success" id="backupDataBtn"><i class="fas fa-download"></i> تصدير نسخة احتياطية (JSON)</button>
+                <button class="btn btn-warning" id="restoreDataBtn"><i class="fas fa-upload"></i> استعادة نسخة احتياطية</button>
+                <input type="file" id="restoreFileInput" accept=".json" style="display:none;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaign Preview & Confirmation Modal -->
+    <div class="modal-overlay" id="campaignPreviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-paper-plane"></i> معاينة وتأكيد حملة الإرسال الجماعي الحقيقي</h3>
+                <span class="close-modal" id="closeCampModal">&times;</span>
+            </div>
+            <div class="card-panel" style="background:#f8fafc; font-size:14px; line-height:2.2;">
+                <p><strong>نوع القناة:</strong> <span id="modalCampChannel">WhatsApp</span></p>
+                <p><strong>إجمالي المستلمين (حسب الفلتر):</strong> <span id="modalCampTotal">0</span></p>
+                <p><strong>الأرقام الصالحة للإرسال:</strong> <span id="modalCampValid" style="color:#0b7e4b; font-weight:bold;">0</span></p>
+                <p><strong>الأرقام غير الصالحة (سيتم تخطيها):</strong> <span id="modalCampInvalid" style="color:#b91c1c; font-weight:bold;">0</span></p>
+                <p style="color:#92400e; font-size:12px; margin-top:5px;" id="apiWarningNotice">⚠️ تنبيه: الإرسال الحقيقي يتطلب API/Backend صالحًا (delivered غير متاح بدون Webhook).</p>
+            </div>
+            <div class="mt-2" id="invalidPhonesListPreview" style="display:none; background:#fee2e2; padding:10px; border-radius:8px; max-height:100px; overflow-y:auto; font-size:12px; color:#991b1b;"></div>
+            <div class="mt-2 flex" style="justify-content:flex-end;">
+                <button class="btn btn-outline" id="cancelCampModalBtn">إلغاء</button>
+                <button class="btn btn-success" id="executeCampaignBtn"><i class="fas fa-rocket"></i> 🚀 بدء الإرسال الحقيقي</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Single Number Modal -->
+    <div class="modal-overlay" id="testNumberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-vial"></i> رسالة اختبار لرقم واحد</h3>
+                <span class="close-modal" id="closeTestModal">&times;</span>
+            </div>
+            <div class="grid-2 mt-2">
+                <div><label class="label-sm">رقم الهاتف (مع رمز الدولة)</label><input class="input" id="testPhoneInput" placeholder="+967770000000"></div>
+            </div>
+            <div class="mt-2">
+                <label class="label-sm">نص الرسالة التجريبية</label>
+                <textarea class="input" id="testMsgInput" rows="4" style="max-width:100%;">هذه رسالة تجريبية من نظام مدارس القمم الأهلية للتأكد من سلامة اتصال الـ API.</textarea>
+            </div>
+            <div class="mt-2 flex" style="justify-content:flex-end;">
+                <button class="btn btn-outline" id="cancelTestModalBtn">إغلاق</button>
+                <button class="btn btn-primary" id="sendTestMsgBtn">إرسال اختبار</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel Column Mapping Modal -->
+    <div class="modal-overlay" id="excelMappingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-columns"></i> مطابقة أعمدة ملف Excel</h3>
+                <span class="close-modal" id="closeMappingModal">&times;</span>
+            </div>
+            <p style="font-size:13px; color:#64748b; margin-bottom:15px;">يرجى مطابقة أعمدة ملف Excel مع حقول النظام الأساسية أدناه:</p>
+            <div class="grid-2" id="mappingFieldsContainer" style="gap:15px;"></div>
+            <div class="mt-2" style="background:#f8fafc; padding:15px; border-radius:12px; font-size:13px;" id="excelSummaryStats"></div>
+            <div class="mt-2 flex" style="justify-content:flex-end;">
+                <button class="btn btn-outline" id="cancelMappingBtn">إلغاء</button>
+                <button class="btn btn-primary" id="confirmImportBtn">تأكيد الاستيراد النهائي</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div class="modal-overlay" id="editStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> تعديل بيانات الطالب</h3>
+                <span class="close-modal" id="closeEditModal">&times;</span>
+            </div>
+            <input type="hidden" id="editStId">
+            <div class="grid-2">
+                <div><label class="label-sm">اسم الطالب</label><input class="input" id="editStName"></div>
+                <div><label class="label-sm">ولي الأمر</label><input class="input" id="editStGuardian"></div>
+                <div><label class="label-sm">رقم الهاتف</label><input class="input" id="editStPhone"></div>
+                <div><label class="label-sm">الصف</label><input class="input" id="editStClass"></div>
+                <div><label class="label-sm">إجمالي الرسوم</label><input class="input" type="number" id="editStTotal"></div>
+                <div><label class="label-sm">المدفوع</label><input class="input" type="number" id="editStPaid"></div>
+                <div><label class="label-sm">الشهر</label><input class="input" id="editStMonth"></div>
+                <div><label class="label-sm">السنة</label><input class="input" id="editStYear"></div>
+            </div>
+            <div class="mt-2 flex" style="justify-content:flex-end;">
+                <button class="btn btn-outline" id="cancelEditBtn">إلغاء</button>
+                <button class="btn btn-primary" id="saveEditStudentBtn">حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // --- Native Lightweight ZIP & XLSX Reader (No External Libraries) ---
+            const NativeXLSXReader = {
+                read: async function(file) {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const zipFiles = await this.unzip(arrayBuffer);
+                    
+                    if (!zipFiles['xl/workbook.xml'] && !zipFiles['xl/worksheets/sheet1.xml']) {
+                        throw new Error("تعذر قراءة ملف Excel. تأكد أن الملف بصيغة XLSX سليمة.");
+                    }
+
+                    // Read Shared Strings
+                    let sharedStrings = [];
+                    if (zipFiles['xl/sharedStrings.xml']) {
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(zipFiles['xl/sharedStrings.xml'], 'text/xml');
+                        const siNodes = xmlDoc.getElementsByTagName('si');
+                        for (let i = 0; i < siNodes.length; i++) {
+                            const tNode = siNodes[i].getElementsByTagName('t');
+                            let text = "";
+                            for (let j = 0; j < tNode.length; j++) {
+                                text += tNode[j].textContent;
+                            }
+                            sharedStrings.push(text);
+                        }
+                    }
+
+                    // Read first worksheet (xl/worksheets/sheet1.xml)
+                    let sheetXmlStr = zipFiles['xl/worksheets/sheet1.xml'];
+                    if (!sheetXmlStr) {
+                        const sheetKey = Object.keys(zipFiles).find(k => k.startsWith('xl/worksheets/sheet'));
+                        if (sheetKey) sheetXmlStr = zipFiles[sheetKey];
+                    }
+
+                    if (!sheetXmlStr) {
+                        throw new Error("لم يتم العثور على ورقة عمل داخل ملف XLSX.");
+                    }
+
+                    const parser = new DOMParser();
+                    const sheetDoc = parser.parseFromString(sheetXmlStr, 'text/xml');
+                    const rowNodes = sheetDoc.getElementsByTagName('row');
+                    
+                    let rawRows = [];
+                    for (let r = 0; r < rowNodes.length; r++) {
+                        const rowNode = rowNodes[r];
+                        const cNodes = rowNode.getElementsByTagName('c');
+                        let rowObj = {};
+                        let cellIndex = 0;
+
+                        for (let c = 0; c < cNodes.length; c++) {
+                            const cell = cNodes[c];
+                            const rAttr = cell.getAttribute('r'); // e.g. A1, B1
+                            if (rAttr) {
+                                cellIndex = this.colLetterToIndex(rAttr.replace(/[0-9]/g, ''));
+                            }
+
+                            const tAttr = cell.getAttribute('t'); // s = shared string, inlineStr, etc.
+                            const vNode = cell.getElementsByTagName('v');
+                            const isNode = cell.getElementsByTagName('is');
+                            
+                            let val = "";
+                            if (vNode.length > 0) {
+                                val = vNode[0].textContent;
+                                if (tAttr === 's') {
+                                    const sIndex = parseInt(val, 10);
+                                    if (!isNaN(sIndex) && sharedStrings[sIndex] !== undefined) {
+                                        val = sharedStrings[sIndex];
+                                    }
+                                }
+                            } else if (isNode.length > 0) {
+                                const tNodes = isNode[0].getElementsByTagName('t');
+                                if (tNodes.length > 0) val = tNodes[0].textContent;
+                            }
+
+                            rowObj[cellIndex] = val;
+                            cellIndex++;
+                        }
+                        rawRows.push(rowObj);
+                    }
+
+                    if (rawRows.length === 0) return [];
+
+                    // Convert raw rows to array of objects using header row (row 0)
+                    const headerMap = {};
+                    const firstRow = rawRows[0];
+                    for (let colIdx in firstRow) {
+                        headerMap[colIdx] = String(firstRow[colIdx]).trim();
+                    }
+
+                    let formattedRows = [];
+                    for (let i = 1; i < rawRows.length; i++) {
+                        let obj = {};
+                        let hasData = false;
+                        const row = rawRows[i];
+                        for (let colIdx in headerMap) {
+                            const headerName = headerMap[colIdx];
+                            if (headerName) {
+                                const cellVal = row[colIdx] !== undefined ? row[colIdx] : "";
+                                obj[headerName] = cellVal;
+                                if (cellVal !== "") hasData = true;
+                            }
+                        }
+                        if (hasData) formattedRows.push(obj);
+                    }
+
+                    return formattedRows;
+                },
+
+                colLetterToIndex: function(letter) {
+                    let col = 0;
+                    for (let i = 0; i < letter.length; i++) {
+                        col = col * 26 + (letter.charCodeAt(i) - 64);
+                    }
+                    return col - 1;
+                },
+
+                unzip: async function(arrayBuffer) {
+                    const files = {};
+                    const view = new DataView(arrayBuffer);
+                    let offset = 0;
+
+                    while (offset < arrayBuffer.byteLength - 4) {
+                        const sig = view.getUint32(offset, true);
+                        if (sig === 0x04034b50) { // Local file header
+                            const compression = view.getUint16(offset + 8, true);
+                            const compSize = view.getUint32(offset + 18, true);
+                            const uncompSize = view.getUint32(offset + 22, true);
+                            const nameLen = view.getUint16(offset + 26, true);
+                            const extraLen = view.getUint16(offset + 28, true);
+                            
+                            const nameBytes = new Uint8Array(arrayBuffer, offset + 30, nameLen);
+                            const fileName = new TextDecoder().decode(nameBytes);
+                            
+                            const dataOffset = offset + 30 + nameLen + extraLen;
+                            const compData = new Uint8Array(arrayBuffer, dataOffset, compSize);
+
+                            if (compression === 0) { // Stored (No compression)
+                                files[fileName] = new TextDecoder().decode(compData);
+                            } else if (compression === 8) { // Deflate
+                                try {
+                                    const ds = new DecompressionStream('deflate-raw');
+                                    const writer = ds.writable.getWriter();
+                                    writer.write(compData);
+                                    writer.close();
+                                    const resp = new Response(ds.readable);
+                                    const buf = await resp.arrayBuffer();
+                                    files[fileName] = new TextDecoder().decode(buf);
+                                } catch (e) {
+                                    files[fileName] = "";
+                                }
+                            }
+                            offset = dataOffset + compSize;
+                        } else {
+                            offset++;
+                        }
+                    }
+                    return files;
+                }
+            };
+
+            const Utils = {
+                generateUUID: () => 'STU-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+                generateCampaignId: () => 'CAMP-' + Date.now().toString(36).toUpperCase(),
+                escapeHTML: (str) => {
+                    if (str === null || str === undefined) return '';
+                    const div = document.createElement('div');
+                    div.textContent = String(str);
+                    return div.innerHTML;
+                },
+                parseArabicNumber: (str) => {
+                    if (str === null || str === undefined) return 0;
+                    const arabicNumbers = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+                    let numStr = String(str).replace(/[٠-٩]/g, w => arabicNumbers.indexOf(w));
+                    let parsed = parseFloat(numStr.replace(/[^\d.-]/g, ''));
+                    return isNaN(parsed) ? 0 : parsed;
+                },
+                normalizePhone: (phone, defaultCountryCode = '+967') => {
+                    if (!phone) return { cleaned: '', isValid: false, reason: 'رقم فارغ' };
+                    let str = String(phone).trim();
+                    const arabicNumbers = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+                    str = str.replace(/[٠-٩]/g, w => arabicNumbers.indexOf(w));
+                    
+                    if (/[a-zA-Zء-ي]/.test(str)) {
+                        return { cleaned: str, isValid: false, reason: 'رقم يحتوي على أحرف' };
+                    }
+                    
+                    let cleaned = str.replace(/[^\d+]/g, '');
+                    if (cleaned.length < 9) {
+                        return { cleaned: cleaned, isValid: false, reason: 'رقم ناقص (أقل من 9 أرقام)' };
+                    }
+                    
+                    if (cleaned.startsWith('00')) {
+                        cleaned = '+' + cleaned.slice(2);
+                    } else if (!cleaned.startsWith('+')) {
+                        if (cleaned.startsWith('0')) {
+                            cleaned = defaultCountryCode + cleaned.slice(1);
+                        } else if (cleaned.length === 9) {
+                            cleaned = defaultCountryCode + cleaned;
+                        } else {
+                            cleaned = '+' + cleaned;
+                        }
+                    }
+                    
+                    return { cleaned: cleaned, isValid: true, reason: 'رقم صالح' };
+                },
+                toast: (msg, type = 'info') => {
+                    const container = document.getElementById('toast-container');
+                    if (!container) return;
+                    const t = document.createElement('div');
+                    t.className = `toast ${type}`;
+                    let icon = 'info-circle';
+                    if (type === 'success') icon = 'check-circle';
+                    if (type === 'error') icon = 'exclamation-circle';
+                    if (type === 'warning') icon = 'exclamation-triangle';
+                    t.innerHTML = `<i class="fas fa-${icon}"></i> ${Utils.escapeHTML(msg)}`;
+                    container.appendChild(t);
+                    setTimeout(() => {
+                        t.style.opacity = '0';
+                        setTimeout(() => t.remove(), 300);
+                    }, 3500);
+                }
+            };
+
+            // --- Independent Providers Layer ---
+            const WhatsAppProvider = {
+                sendMessage: async (phone, message, settings) => {
+                    if (settings.testMode === true || settings.testMode === 'true') {
+                        await new Promise(r => setTimeout(r, 300));
+                        return { success: true, messageId: 'WA-MOCK-' + Date.now(), error: null };
+                    }
+
+                    const token = settings.waToken;
+                    const phoneId = settings.waPhoneId;
+                    const templateName = settings.waTemplate;
+                    const langCode = settings.waLang || 'ar';
+                    const backendUrl = settings.backendUrl;
+
+                    if (!token || !phoneId) {
+                        return { success: false, messageId: null, error: 'WhatsApp API غير مُهيأ' };
+                    }
+
+                    let payload = {};
+                    let targetUrl = '';
+
+                    if (backendUrl) {
+                        targetUrl = backendUrl + '/whatsapp';
+                        payload = { phone, message, templateName, langCode, phoneId, token };
+                    } else {
+                        targetUrl = `https://graph.facebook.com/v17.0/${phoneId}/messages`;
+                        if (templateName) {
+                            payload = {
+                                messaging_product: "whatsapp",
+                                to: phone.replace('+', ''),
+                                type: "template",
+                                template: {
+                                    name: templateName,
+                                    language: { code: langCode },
+                                    components: [
+                                        {
+                                            type: "body",
+                                            parameters: [{ type: "text", text: message }]
+                                        }
+                                    ]
+                                }
+                            };
+                        } else {
+                            payload = {
+                                messaging_product: "whatsapp",
+                                to: phone.replace('+', ''),
+                                type: "text",
+                                text: { body: message }
+                            };
+                        }
+                    }
+
+                    try {
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (!backendUrl) {
+                            headers['Authorization'] = `Bearer ${token}`;
+                        }
+
+                        const response = await fetch(targetUrl, {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify(payload)
+                        });
+                        const data = await response.json();
+                        if (response.ok && (data.messages && data.messages[0] || data.success)) {
+                            return { success: true, messageId: data.messages ? data.messages[0].id : (data.messageId || 'WA-API-' + Date.now()), error: null };
+                        } else {
+                            return { success: false, messageId: null, error: data.error?.message || data.message || 'خطأ غير معروف من WhatsApp API' };
+                        }
+                    } catch (e) {
+                        return { success: false, messageId: null, error: 'فشل الاتصال بـ WhatsApp API: ' + e.message };
+                    }
+                },
+                testConnection: async (settings) => {
+                    if (settings.testMode === true || settings.testMode === 'true') {
+                        return { success: true, statusText: 'وضع الاختبار مفعل (اتصال تجريبي ناجح)' };
+                    }
+                    const token = settings.waToken;
+                    const phoneId = settings.waPhoneId;
+                    if (!token || !phoneId) {
+                        return { success: false, statusText: 'WhatsApp API غير مُهيأ' };
+                    }
+                    try {
+                        const response = await fetch(`https://graph.facebook.com/v17.0/${phoneId}`, {
+                            method: 'GET',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (response.ok) {
+                            return { success: true, statusText: 'اتصال حقيقي ناجح مع Meta Graph API' };
+                        } else {
+                            const errData = await response.json();
+                            return { success: false, statusText: errData.error?.message || 'فشل المصادقة مع WhatsApp API' };
+                        }
+                    } catch (e) {
+                        return { success: false, statusText: 'خطأ شبكي: ' + e.message };
+                    }
+                }
+            };
+
+            const SMSProvider = {
+                sendSMS: async (phone, message, settings) => {
+                    if (settings.testMode === true || settings.testMode === 'true') {
+                        await new Promise(r => setTimeout(r, 300));
+                        return { success: true, messageId: 'SMS-MOCK-' + Date.now(), error: null };
+                    }
+
+                    const url = settings.smsUrl;
+                    const key = settings.smsKey;
+                    const sender = settings.smsSender;
+
+                    if (!url || !key) {
+                        return { success: false, messageId: null, error: 'SMS API غير مُهيأ' };
+                    }
+
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${key}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                sender: sender || 'SchoolSystem',
+                                recipient: phone,
+                                body: message
+                            })
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                            return { success: true, messageId: data.id || 'SMS-' + Date.now(), error: null };
+                        } else {
+                            return { success: false, messageId: null, error: data.message || 'خطأ من بوابة SMS Gateway' };
+                        }
+                    } catch (e) {
+                        return { success: false, messageId: null, error: 'فشل الاتصال بـ SMS Gateway: ' + e.message };
+                    }
+                },
+                testConnection: async (settings) => {
+                    if (settings.testMode === true || settings.testMode === 'true') {
+                        return { success: true, statusText: 'وضع الاختبار مفعل (اتصال SMS تجريبي ناجح)' };
+                    }
+                    if (!settings.smsUrl || !settings.smsKey) {
+                        return { success: false, statusText: 'SMS API غير مُهيأ' };
+                    }
+                    try {
+                        const response = await fetch(settings.smsUrl, {
+                            method: 'HEAD',
+                            headers: { 'Authorization': `Bearer ${settings.smsKey}` }
+                        });
+                        if (response.ok || response.status < 500) {
+                            return { success: true, statusText: 'تم الاتصال ببوابة SMS بنجاح' };
+                        } else {
+                            return { success: false, statusText: 'استجابة غير صالحة من بوابة SMS' };
+                        }
+                    } catch (e) {
+                        return { success: false, statusText: 'خطأ شبكي اتصال SMS: ' + e.message };
+                    }
+                }
+            };
+
+            const MessageService = {
+                send: async (channel, phone, message, settings) => {
+                    if (channel === 'whatsapp') {
+                        return await WhatsAppProvider.sendMessage(phone, message, settings);
+                    } else if (channel === 'sms') {
+                        return await SMSProvider.sendSMS(phone, message, settings);
+                    }
+                    return { success: false, messageId: null, error: 'قناة إرسال غير صالحة' };
+                }
+            };
+
+            // --- Storage Manager ---
+            const STORAGE_KEY_STUDENTS = 'schoolStudents';
+            const STORAGE_KEY_LOGS = 'schoolLogs';
+            const STORAGE_KEY_SETTINGS = 'schoolSettings';
+
+            const StorageManager = {
+                loadState: () => {
+                    let students = [];
+                    let logs = [];
+                    let settings = {
+                        schoolName: 'مدارس القمم الأهلية',
+                        accountant: 'أحمد المحاسب',
+                        treasurer: 'خالد الأمين',
+                        defaultCountryCode: '+967',
+                        logoData: '',
+                        schemaVersion: 2,
+                        waPhoneId: '',
+                        waToken: '',
+                        waBizId: '',
+                        waTemplate: '',
+                        waLang: 'ar',
+                        smsProvider: '',
+                        smsUrl: '',
+                        smsKey: '',
+                        smsSender: '',
+                        batchSize: 5,
+                        batchDelay: 1000,
+                        backendUrl: '',
+                        testMode: false
+                    };
+
+                    try {
+                        const rawSt = localStorage.getItem(STORAGE_KEY_STUDENTS);
+                        if (rawSt) {
+                            const parsed = JSON.parse(rawSt);
+                            if (Array.isArray(parsed)) {
+                                students = parsed.map(s => ({
+                                    id: s.id || Utils.generateUUID(),
+                                    name: s.name || 'بدون اسم',
+                                    guardian: s.guardian || '',
+                                    phone: s.phone || '',
+                                    class: s.class || '',
+                                    total: Math.max(0, Number(s.total) || 0),
+                                    paid: Math.max(0, Number(s.paid) || 0),
+                                    remain: Math.max(0, (Number(s.total) || 0) - (Number(s.paid) || 0)),
+                                    month: s.month || '',
+                                    year: s.year || '',
+                                    notified: !!s.notified,
+                                    whatsappSent: !!s.whatsappSent,
+                                    smsSent: !!s.smsSent,
+                                    lastNotified: s.lastNotified || ''
+                                }));
+                            }
+                        }
+
+                        const rawLogs = localStorage.getItem(STORAGE_KEY_LOGS);
+                        if (rawLogs) {
+                            const parsedLogs = JSON.parse(rawLogs);
+                            if (Array.isArray(parsedLogs)) {
+                                logs = parsedLogs.map(l => ({
+                                    logId: l.logId || Utils.generateUUID(),
+                                    campaignId: l.campaignId || 'SYSTEM',
+                                    studentId: l.studentId || '',
+                                    studentName: l.studentName || l.student || 'غير معروف',
+                                    guardian: l.guardian || '',
+                                    phone: l.phone || '',
+                                    type: l.type || 'WhatsApp',
+                                    status: l.status || 'sent',
+                                    reason: l.reason || 'عملية إرسال',
+                                    date: l.date || new Date().toLocaleString()
+                                }));
+                            }
+                        }
+
+                        const rawSet = localStorage.getItem(STORAGE_KEY_SETTINGS);
+                        if (rawSet) {
+                            const parsedSet = JSON.parse(rawSet);
+                            settings = { ...settings, ...parsedSet };
+                        }
+                    } catch (e) {
+                        console.error('Migration / Load error:', e);
+                        Utils.toast('حدث خطأ أثناء قراءة البيانات المخزنة', 'error');
+                    }
+
+                    return { students, logs, settings };
+                },
+                saveState: (state) => {
+                    try {
+                        localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(state.students));
+                        localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(state.logs));
+                        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
+                    } catch (e) {
+                        console.error('Save error:', e);
+                        Utils.toast('فشل الحفظ في الذاكرة المحلية (Quota Exceeded)', 'error');
+                    }
+                }
+            };
+
+            let AppState = {
+                ...StorageManager.loadState(),
+                currentReportData: []
+            };
+
+            // --- Bulk Campaign Queue Engine ---
+            const BulkCampaignEngine = {
+                active: false,
+                paused: false,
+                cancelled: false,
+                queue: [],
+                currentIndex: 0,
+                channel: 'whatsapp',
+                campaignId: '',
+                template: '',
+                failedStudents: [],
+
+                start: (channel, filterType, filterVal, skipNotified, allowResend, template) => {
+                    if (BulkCampaignEngine.active) {
+                        Utils.toast('توجد حملة إرسال قيد التشغيل بالفعل', 'warning');
+                        return;
+                    }
+
+                    BulkCampaignEngine.channel = channel;
+                    BulkCampaignEngine.template = template;
+                    BulkCampaignEngine.campaignId = Utils.generateCampaignId();
+                    BulkCampaignEngine.paused = false;
+                    BulkCampaignEngine.cancelled = false;
+                    BulkCampaignEngine.failedStudents = [];
+
+                    let list = AppState.students;
+
+                    if (filterType === 'manual') {
+                        const selectedIds = Array.from(document.querySelectorAll('.student-check:checked')).map(cb => cb.dataset.id);
+                        list = list.filter(s => selectedIds.includes(s.id));
+                    } else {
+                        if (skipNotified && !allowResend) {
+                            list = list.filter(s => !s.notified);
+                        }
+                        if (filterType === 'unpaid' || filterType === 'delayed') {
+                            list = list.filter(s => s.remain > 0);
+                        } else if (filterType === 'not_notified') {
+                            list = list.filter(s => !s.notified);
+                        } else if (filterType === 'class') {
+                            list = list.filter(s => (s.class || '').toLowerCase().includes(filterVal.toLowerCase()));
+                        } else if (filterType === 'amount') {
+                            list = list.filter(s => s.remain > 50000);
+                        } else if (filterType === 'percent') {
+                            const p = parseFloat(filterVal) || 0;
+                            list = list.filter(s => {
+                                const ratio = s.total > 0 ? (s.paid / s.total) * 100 : 0;
+                                return ratio < p;
+                            });
+                        }
+                    }
+
+                    const validQueue = [];
+                    list.forEach(s => {
+                        const pObj = Utils.normalizePhone(s.phone, AppState.settings.defaultCountryCode);
+                        if (pObj.isValid) {
+                            validQueue.push({ ...s, normalizedPhone: pObj.cleaned });
+                        }
+                    });
+
+                    if (validQueue.length === 0) {
+                        Utils.toast('لا توجد أرقام هواتف صالحة مطابقة لشروط الحملة', 'error');
+                        return;
+                    }
+
+                    BulkCampaignEngine.queue = validQueue;
+                    BulkCampaignEngine.currentIndex = 0;
+                    BulkCampaignEngine.active = true;
+
+                    document.getElementById('bulkActivePanel').style.display = 'block';
+                    document.getElementById('activeCampChannelName').textContent = channel.toUpperCase();
+                    document.getElementById('activeCampId').textContent = BulkCampaignEngine.campaignId;
+                    document.getElementById('lblTotalRec').textContent = validQueue.length;
+                    document.getElementById('activeCampStatusBadge').textContent = 'قيد الإرسال';
+                    document.getElementById('activeCampStatusBadge').className = 'badge badge-warning';
+                    
+                    document.getElementById('pauseCampBtn').style.display = 'inline-block';
+                    document.getElementById('resumeCampBtn').style.display = 'none';
+                    document.getElementById('retryFailedBtn').style.display = 'none';
+
+                    BulkCampaignEngine.processBatch();
+                },
+
+                processBatch: async () => {
+                    const batchSize = Math.max(1, parseInt(AppState.settings.batchSize) || 5);
+                    const delayMs = Math.max(200, parseInt(AppState.settings.batchDelay) || 1000);
+
+                    while (BulkCampaignEngine.active && !BulkCampaignEngine.paused && !BulkCampaignEngine.cancelled && BulkCampaignEngine.currentIndex < BulkCampaignEngine.queue.length) {
+                        const chunk = BulkCampaignEngine.queue.slice(BulkCampaignEngine.currentIndex, BulkCampaignEngine.currentIndex + batchSize);
+                        
+                        for (let student of chunk) {
+                            if (!BulkCampaignEngine.active || BulkCampaignEngine.cancelled || BulkCampaignEngine.paused) break;
+
+                            const msg = buildMessage(student, BulkCampaignEngine.template);
+                            const res = await MessageService.send(BulkCampaignEngine.channel, student.normalizedPhone, msg, AppState.settings);
+
+                            if (res.success) {
+                                student.notified = true;
+                                if (BulkCampaignEngine.channel === 'whatsapp') student.whatsappSent = true;
+                                if (BulkCampaignEngine.channel === 'sms') student.smsSent = true;
+
+                                logCampaignRecord({
+                                    campaignId: BulkCampaignEngine.campaignId,
+                                    studentId: student.id,
+                                    studentName: student.name,
+                                    guardian: student.guardian,
+                                    phone: student.phone,
+                                    type: BulkCampaignEngine.channel.toUpperCase(),
+                                    status: 'sent',
+                                    reason: `تم قبول الرسالة (sent). ملاحظة: delivered غير متاح بدون Webhook (ID: ${res.messageId})`
+                                });
+                            } else {
+                                BulkCampaignEngine.failedStudents.push(student);
+                                logCampaignRecord({
+                                    campaignId: BulkCampaignEngine.campaignId,
+                                    studentId: student.id,
+                                    studentName: student.name,
+                                    guardian: student.guardian,
+                                    phone: student.phone,
+                                    type: BulkCampaignEngine.channel.toUpperCase(),
+                                    status: 'failed',
+                                    reason: res.error || 'فشل إرسال المزود'
+                                });
+                            }
+
+                            BulkCampaignEngine.currentIndex++;
+                            BulkCampaignEngine.updateUIProgress();
+                        }
+
+                        StorageManager.saveState(AppState);
+                        refreshAllViews();
+
+                        if (BulkCampaignEngine.currentIndex < BulkCampaignEngine.queue.length && !BulkCampaignEngine.paused) {
+                            await new Promise(r => setTimeout(r, delayMs));
+                        }
+                    }
+
+                    if (BulkCampaignEngine.currentIndex >= BulkCampaignEngine.queue.length && BulkCampaignEngine.active) {
+                        Utils.toast('اكتملت حملة الإرسال الجماعي بنجاح', 'success');
+                        document.getElementById('activeCampStatusBadge').textContent = 'مكتملة';
+                        document.getElementById('activeCampStatusBadge').className = 'badge badge-success';
+                        document.getElementById('pauseCampBtn').style.display = 'none';
+                        if (BulkCampaignEngine.failedStudents.length > 0) {
+                            document.getElementById('retryFailedBtn').style.display = 'inline-block';
+                        }
+                        BulkCampaignEngine.active = false;
+                    }
+                },
+
+                updateUIProgress: () => {
+                    const total = BulkCampaignEngine.queue.length;
+                    const sent = BulkCampaignEngine.currentIndex;
+                    const fails = BulkCampaignEngine.failedStudents.length;
+
+                    document.getElementById('lblSentRec').textContent = sent;
+                    document.getElementById('lblFailRec').textContent = fails;
+                    const pct = Math.round((sent / total) * 100);
+                    document.getElementById('bulkProgressFill').style.width = pct + '%';
+                },
+
+                pause: () => {
+                    BulkCampaignEngine.paused = true;
+                    document.getElementById('activeCampStatusBadge').textContent = 'متوقفة مؤقتاً';
+                    document.getElementById('activeCampStatusBadge').className = 'badge badge-info';
+                    document.getElementById('pauseCampBtn').style.display = 'none';
+                    document.getElementById('resumeCampBtn').style.display = 'inline-block';
+                    Utils.toast('تم إيقاف الحملة مؤقتاً', 'info');
+                },
+
+                resume: () => {
+                    if (!BulkCampaignEngine.paused) return;
+                    BulkCampaignEngine.paused = false;
+                    document.getElementById('activeCampStatusBadge').textContent = 'قيد الإرسال';
+                    document.getElementById('activeCampStatusBadge').className = 'badge badge-warning';
+                    document.getElementById('pauseCampBtn').style.display = 'inline-block';
+                    document.getElementById('resumeCampBtn').style.display = 'none';
+                    Utils.toast('تم استكمال الحملة', 'success');
+                    BulkCampaignEngine.processBatch();
+                },
+
+                cancel: () => {
+                    BulkCampaignEngine.active = false;
+                    BulkCampaignEngine.paused = false;
+                    BulkCampaignEngine.cancelled = true;
+                    document.getElementById('activeCampStatusBadge').textContent = 'متوقفة / ملغاة';
+                    document.getElementById('activeCampStatusBadge').className = 'badge badge-danger';
+                    document.getElementById('pauseCampBtn').style.display = 'none';
+                    document.getElementById('resumeCampBtn').style.display = 'none';
+                    if (BulkCampaignEngine.failedStudents.length > 0) {
+                        document.getElementById('retryFailedBtn').style.display = 'inline-block';
+                    }
+                    Utils.toast('تم إيقاف الحملة نهائياً', 'warning');
+                },
+
+                retryFailed: () => {
+                    if (BulkCampaignEngine.failedStudents.length === 0) return;
+                    const retryList = [...BulkCampaignEngine.failedStudents];
+                    BulkCampaignEngine.queue = retryList;
+                    BulkCampaignEngine.currentIndex = 0;
+                    BulkCampaignEngine.failedStudents = [];
+                    BulkCampaignEngine.active = true;
+                    BulkCampaignEngine.paused = false;
+
+                    document.getElementById('activeCampStatusBadge').textContent = 'إعادة إرسال الفاشلة فقط';
+                    document.getElementById('activeCampStatusBadge').className = 'badge badge-warning';
+                    document.getElementById('lblTotalRec').textContent = retryList.length;
+                    document.getElementById('retryFailedBtn').style.display = 'none';
+                    document.getElementById('pauseCampBtn').style.display = 'inline-block';
+
+                    Utils.toast('بدء إعادة إرسال الرسائل الفاشلة فقط', 'info');
+                    BulkCampaignEngine.processBatch();
+                }
+            };
+
+            const logCampaignRecord = (rec) => {
+                AppState.logs.push({
+                    logId: Utils.generateUUID(),
+                    campaignId: rec.campaignId,
+                    studentId: rec.studentId,
+                    studentName: rec.studentName,
+                    guardian: rec.guardian,
+                    phone: rec.phone,
+                    type: rec.type,
+                    status: rec.status,
+                    reason: rec.reason,
+                    date: new Date().toLocaleString()
+                });
+                StorageManager.saveState(AppState);
+                renderLogsTable();
+            };
+
+            // --- Dashboard Statistics ---
+            const updateDashboard = () => {
+                const students = AppState.students;
+                const totalSt = students.length;
+                let totalFees = 0, totalPaid = 0, totalRemain = 0;
+                let fullyPaidCount = 0, delayedCount = 0, notifiedCount = 0, notNotifiedCount = 0;
+                let waSentCount = 0, smsSentCount = 0;
+
+                students.forEach(s => {
+                    totalFees += s.total;
+                    totalPaid += s.paid;
+                    totalRemain += s.remain;
+
+                    if (s.remain <= 0) fullyPaidCount++;
+                    else delayedCount++;
+
+                    if (s.notified) notifiedCount++;
+                    else notNotifiedCount++;
+
+                    if (s.whatsappSent) waSentCount++;
+                    if (s.smsSent) smsSentCount++;
+                });
+
+                document.getElementById('statStudents').textContent = totalSt;
+                document.getElementById('statTotal').textContent = totalFees.toLocaleString();
+                document.getElementById('statPaid').textContent = totalPaid.toLocaleString();
+                document.getElementById('statRemain').textContent = totalRemain.toLocaleString();
+                document.getElementById('statFullyPaid').textContent = fullyPaidCount;
+                document.getElementById('statDelayed').textContent = delayedCount;
+                document.getElementById('statNotified').textContent = notifiedCount;
+                document.getElementById('statNotNotified').textContent = notNotifiedCount;
+                document.getElementById('statWaSent').textContent = waSentCount;
+                document.getElementById('statSmsSent').textContent = smsSentCount;
+            };
+
+            // --- Table Rendering ---
+            const renderStudentsTable = (filter = '') => {
+                const tbody = document.getElementById('studentsTbody');
+                if (!tbody) return;
+                let list = AppState.students;
+
+                if (filter) {
+                    const f = filter.toLowerCase().trim();
+                    list = list.filter(s => 
+                        s.name.toLowerCase().includes(f) || 
+                        s.id.toLowerCase().includes(f) ||
+                        s.phone.includes(f) ||
+                        s.guardian.toLowerCase().includes(f) ||
+                        s.class.toLowerCase().includes(f)
+                    );
+                }
+
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11" style="padding:30px;">لا توجد بيانات طلاب</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = list.map(s => {
+                    const statusBadge = s.remain <= 0 ? 
+                        '<span class="badge badge-success">مسدد بالكامل</span>' : 
+                        '<span class="badge badge-danger">متأخر</span>';
+                    const phoneObj = Utils.normalizePhone(s.phone, AppState.settings.defaultCountryCode);
+                    const phoneHtml = phoneObj.isValid ? 
+                        Utils.escapeHTML(s.phone) : 
+                        `${Utils.escapeHTML(s.phone)} <span class="badge badge-warning" title="${phoneObj.reason}">⚠️ غير صالح</span>`;
+
+                    return `
+                        <tr>
+                            <td><input type="checkbox" class="student-check" data-id="${Utils.escapeHTML(s.id)}"></td>
+                            <td>${Utils.escapeHTML(s.id)}</td>
+                            <td>${Utils.escapeHTML(s.name)}</td>
+                            <td>${Utils.escapeHTML(s.guardian)}</td>
+                            <td dir="ltr">${phoneHtml}</td>
+                            <td>${Utils.escapeHTML(s.class)}</td>
+                            <td>${s.total.toLocaleString()}</td>
+                            <td>${s.paid.toLocaleString()}</td>
+                            <td>${s.remain.toLocaleString()}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline edit-st-btn" data-id="${Utils.escapeHTML(s.id)}"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.querySelectorAll('.edit-st-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => openEditStudentModal(e.currentTarget.dataset.id));
+                });
+            };
+
+            // --- Message Building & Preview ---
+            const buildMessage = (student, template) => {
+                if (!student) return '';
+                let msg = template || '';
+                const ratio = student.total > 0 ? ((student.paid / student.total) * 100).toFixed(0) : 0;
+                
+                const rep = {
+                    '{اسم_الطالب}': student.name || '',
+                    '{ولي_الأمر}': student.guardian || '',
+                    '{الصف}': student.class || '',
+                    '{المبلغ}': student.total.toLocaleString(),
+                    '{المدفوع}': student.paid.toLocaleString(),
+                    '{المتبقي}': student.remain.toLocaleString(),
+                    '{نسبة_السداد}': ratio + '%',
+                    '{الشهر}': student.month || '',
+                    '{السنة}': student.year || '',
+                    '{اسم_المحاسب}': AppState.settings.accountant || '',
+                    '{اسم_أمين_الصندوق}': AppState.settings.treasurer || '',
+                    '{اسم_المدرسة}': AppState.settings.schoolName || '',
+                    '{تاريخ_اليوم}': new Date().toLocaleDateString('ar-SA'),
+                    '{رقم_الطالب}': student.id || ''
+                };
+
+                for (let k in rep) {
+                    msg = msg.split(k).join(rep[k]);
+                }
+                return msg.trim();
+            };
+
+            const updatePreview = () => {
+                const preview = document.getElementById('templatePreview');
+                const editor = document.getElementById('messageEditor');
+                if (!preview || !editor) return;
+
+                const template = editor.value;
+                if (AppState.students.length > 0) {
+                    preview.textContent = buildMessage(AppState.students[0], template);
+                } else {
+                    preview.textContent = '⚠️ يرجى استيراد الطلاب أولاً لعرض المعاينة';
+                }
+            };
+
+            // --- Excel Import & Smart Mapping ---
+            let tempImportRows = [];
+            let tempImportHeaders = [];
+
+            const analyzeExcelFile = async (file) => {
+                const fileName = file.name.toLowerCase();
+                if (!fileName.endsWith('.xlsx')) {
+                    Utils.toast('يرجى اختيار ملف Excel بصيغة XLSX.', 'error');
+                    return;
+                }
+
+                try {
+                    const rows = await NativeXLSXReader.read(file);
+                    if (!rows || rows.length === 0) {
+                        Utils.toast('الملف فارغ أو لا يحتوي على بيانات صالحة', 'error');
+                        return;
+                    }
+
+                    tempImportRows = rows;
+                    tempImportHeaders = Object.keys(rows[0]);
+                    Utils.toast('تم تحميل ملف Excel بنجاح.', 'success');
+                    openMappingModal();
+                } catch (err) {
+                    Utils.toast('تعذر قراءة ملف Excel. تأكد أن الملف بصيغة XLSX سليمة.', 'error');
+                }
+            };
+
+            const openMappingModal = () => {
+                const container = document.getElementById('mappingFieldsContainer');
+                const fields = [
+                    { key: 'name', label: 'اسم الطالب *', aliases: ['اسم', 'طالب', 'name'] },
+                    { key: 'guardian', label: 'ولي الأمر', aliases: ['ولي', 'أب', 'والد', 'guardian'] },
+                    { key: 'phone', label: 'رقم الهاتف / الجوال', aliases: ['هاتف', 'جوال', 'تلفون', 'phone', 'mobile'] },
+                    { key: 'class', label: 'الصف الدراسي', aliases: ['صف', 'فصل', 'مرحلة', 'class'] },
+                    { key: 'total', label: 'إجمالي الرسوم', aliases: ['قسط', 'إجمالي', 'مبلغ', 'رسوم', 'total'] },
+                    { key: 'paid', label: 'المدفوع', aliases: ['مدفوع', 'مسدد', 'paid'] },
+                    { key: 'id', label: 'كود / رقم الطالب (ID)', aliases: ['كود', 'رقم', 'id', 'مسلسل'] },
+                    { key: 'month', label: 'الشهر', aliases: ['شهر', 'month'] },
+                    { key: 'year', label: 'السنة', aliases: ['سنة', 'عام', 'year'] }
+                ];
+
+                container.innerHTML = fields.map(f => {
+                    let matchedHeader = '';
+                    for (let h of tempImportHeaders) {
+                        const cleanH = h.toLowerCase().trim();
+                        if (f.aliases.some(a => cleanH.includes(a))) {
+                            matchedHeader = h;
+                            break;
+                        }
+                    }
+
+                    const options = tempImportHeaders.map(h => `<option value="${Utils.escapeHTML(h)}" ${h === matchedHeader ? 'selected' : ''}>${Utils.escapeHTML(h)}</option>`).join('');
+                    return `
+                        <div>
+                            <label class="label-sm">${f.label}</label>
+                            <select class="input mapping-select" data-field="${f.key}" style="max-width:100%;">
+                                <option value="">--- تجاهل هذا الحقل ---</option>
+                                ${options}
+                            </select>
+                        </div>
+                    `;
+                }).join('');
+
+                document.getElementById('excelSummaryStats').textContent = `إجمالي الصفوف المستكشفة في الملف: ${tempImportRows.length} صف.`;
+                document.getElementById('excelMappingModal').classList.add('active');
+            };
+
+            const confirmImportExecution = () => {
+                const selects = document.querySelectorAll('.mapping-select');
+                const mapping = {};
+                selects.forEach(sel => {
+                    if (sel.value) mapping[sel.dataset.field] = sel.value;
+                });
+
+                if (!mapping.name) {
+                    Utils.toast('حقل "اسم الطالب" إلزامي للمتابعة', 'error');
+                    return;
+                }
+
+                const mode = document.getElementById('importMode').value;
+                if (mode === 'replace') {
+                    const autoBackup = {
+                        version: "4.3",
+                        createdAt: new Date().toISOString(),
+                        autoBackupBeforeReplace: true,
+                        students: AppState.students,
+                        logs: AppState.logs,
+                        settings: AppState.settings
+                    };
+                    localStorage.setItem('school_autobackup_before_replace', JSON.stringify(autoBackup));
+                    AppState.students = [];
+                }
+
+                let newCount = 0, updatedCount = 0, duplicateCount = 0, ignoredCount = 0, errorCount = 0;
+                const seenInFile = new Set();
+
+                tempImportRows.forEach(row => {
+                    try {
+                        const name = row[mapping.name] ? String(row[mapping.name]).trim() : '';
+                        if (!name) {
+                            ignoredCount++;
+                            return;
+                        }
+
+                        const rawId = mapping.id && row[mapping.id] ? String(row[mapping.id]).trim() : '';
+                        const guardian = mapping.guardian && row[mapping.guardian] ? String(row[mapping.guardian]).trim() : '';
+                        const rawPhone = mapping.phone && row[mapping.phone] ? String(row[mapping.phone]).trim() : '';
+                        const phoneObj = Utils.normalizePhone(rawPhone, AppState.settings.defaultCountryCode);
+                        const className = mapping.class && row[mapping.class] ? String(row[mapping.class]).trim() : '';
+                        
+                        const total = mapping.total ? Utils.parseArabicNumber(row[mapping.total]) : 0;
+                        const paid = mapping.paid ? Utils.parseArabicNumber(row[mapping.paid]) : 0;
+                        if (paid > total) errorCount++;
+                        const remain = Math.max(0, total - paid);
+                        const month = mapping.month && row[mapping.month] ? String(row[mapping.month]).trim() : '';
+                        const year = mapping.year && row[mapping.year] ? String(row[mapping.year]).trim() : '';
+
+                        const uniqueKey = rawId ? `ID:${rawId}` : (phoneObj.isValid ? `PHONE:${phoneObj.cleaned}` : `NAME:${name}`);
+                        if (seenInFile.has(uniqueKey)) {
+                            duplicateCount++;
+                            return;
+                        }
+                        seenInFile.add(uniqueKey);
+
+                        let existingSt = null;
+                        if (rawId) {
+                            existingSt = AppState.students.find(s => s.id === rawId);
+                        }
+                        if (!existingSt && phoneObj.isValid) {
+                            existingSt = AppState.students.find(s => s.phone === phoneObj.cleaned);
+                        }
+
+                        if (existingSt) {
+                            if (mode === 'merge') {
+                                existingSt.name = name;
+                                if (guardian) existingSt.guardian = guardian;
+                                if (phoneObj.isValid) existingSt.phone = phoneObj.cleaned;
+                                if (className) existingSt.class = className;
+                                existingSt.total = total;
+                                existingSt.paid = paid;
+                                existingSt.remain = remain;
+                                if (month) existingSt.month = month;
+                                if (year) existingSt.year = year;
+                                updatedCount++;
+                            } else if (mode === 'add') {
+                                duplicateCount++;
+                                return; 
+                            }
+                        } else {
+                            AppState.students.push({
+                                id: rawId || Utils.generateUUID(),
+                                name: name,
+                                guardian: guardian,
+                                phone: phoneObj.isValid ? phoneObj.cleaned : rawPhone,
+                                class: className,
+                                total: total,
+                                paid: paid,
+                                remain: remain,
+                                month: month,
+                                year: year,
+                                notified: false,
+                                whatsappSent: false,
+                                smsSent: false
+                            });
+                            newCount++;
+                        }
+                    } catch (ex) {
+                        errorCount++;
+                    }
+                });
+
+                StorageManager.saveState(AppState);
+                refreshAllViews();
+                document.getElementById('excelMappingModal').classList.remove('active');
+                
+                Utils.toast(`تم الاستيراد: ${newCount} جديد، ${updatedCount} مُحدث، ${duplicateCount} مكرر (تم تخطيه)`, 'success');
+            };
+
+            // --- Reports Generation ---
+            const generateReport = () => {
+                const type = document.getElementById('reportTypeSelect').value;
+                const subVal = (document.getElementById('reportSubVal').value || '').toLowerCase().trim();
+                let list = AppState.students;
+
+                if (type === 'delayed') {
+                    list = list.filter(s => s.remain > 0);
+                } else if (type === 'fully_paid') {
+                    list = list.filter(s => s.remain <= 0);
+                } else if (type === 'class' && subVal) {
+                    list = list.filter(s => (s.class || '').toLowerCase().includes(subVal));
+                } else if (type === 'month' && subVal) {
+                    list = list.filter(s => (s.month || '').toLowerCase().includes(subVal));
+                } else if (type === 'amount') {
+                    const amt = parseFloat(subVal) || 0;
+                    list = list.filter(s => s.remain >= amt);
+                } else if (type === 'percent') {
+                    const pct = parseFloat(subVal) || 0;
+                    list = list.filter(s => {
+                        const ratio = s.total > 0 ? (s.paid / s.total) * 100 : 0;
+                        return ratio <= pct;
+                    });
+                } else if (type === 'not_notified') {
+                    list = list.filter(s => !s.notified);
+                } else if (type === 'notified') {
+                    list = list.filter(s => s.notified);
+                } else if (type === 'invalid_phones') {
+                    list = list.filter(s => !Utils.normalizePhone(s.phone, AppState.settings.defaultCountryCode).isValid);
+                }
+
+                AppState.currentReportData = list;
+                renderReportTable(list);
+            };
+
+            const renderReportTable = (list) => {
+                const tbody = document.getElementById('reportBody');
+                if (!tbody) return;
+
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="13" style="padding:25px;">لا توجد بيانات مطابقة للتقرير</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = list.map((s, idx) => {
+                    const ratio = s.total > 0 ? ((s.paid / s.total) * 100).toFixed(0) : 0;
+                    return `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td>${Utils.escapeHTML(s.id)}</td>
+                            <td>${Utils.escapeHTML(s.name)}</td>
+                            <td>${Utils.escapeHTML(s.guardian)}</td>
+                            <td dir="ltr">${Utils.escapeHTML(s.phone)}</td>
+                            <td>${Utils.escapeHTML(s.class)}</td>
+                            <td>${s.total.toLocaleString()}</td>
+                            <td>${s.paid.toLocaleString()}</td>
+                            <td>${s.remain.toLocaleString()}</td>
+                            <td>${ratio}%</td>
+                            <td>${s.whatsappSent ? '✅' : '❌'}</td>
+                            <td>${s.smsSent ? '✅' : '❌'}</td>
+                            <td>${s.notified ? '✅ نعم' : '❌ لا'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            };
+
+            // --- Edit Student Modal ---
+            const openEditStudentModal = (id) => {
+                const s = AppState.students.find(x => x.id === id);
+                if (!s) return;
+                document.getElementById('editStId').value = s.id;
+                document.getElementById('editStName').value = s.name;
+                document.getElementById('editStGuardian').value = s.guardian;
+                document.getElementById('editStPhone').value = s.phone;
+                document.getElementById('editStClass').value = s.class;
+                document.getElementById('editStTotal').value = s.total;
+                document.getElementById('editStPaid').value = s.paid;
+                document.getElementById('editStMonth').value = s.month;
+                document.getElementById('editStYear').value = s.year;
+                document.getElementById('editStudentModal').classList.add('active');
+            };
+
+            const saveStudentEdit = () => {
+                const id = document.getElementById('editStId').value;
+                const s = AppState.students.find(x => x.id === id);
+                if (!s) return;
+
+                const name = document.getElementById('editStName').value.trim();
+                if (!name) {
+                    Utils.toast('اسم الطالب مطلوب', 'error');
+                    return;
+                }
+
+                const total = Utils.parseArabicNumber(document.getElementById('editStTotal').value);
+                const paid = Utils.parseArabicNumber(document.getElementById('editStPaid').value);
+                if (paid > total) {
+                    Utils.toast('تحذير: المبلغ المدفوع أكبر من إجمالي الرسوم!', 'warning');
+                }
+
+                s.name = name;
+                s.guardian = document.getElementById('editStGuardian').value.trim();
+                s.phone = document.getElementById('editStPhone').value.trim();
+                s.class = document.getElementById('editStClass').value.trim();
+                s.total = total;
+                s.paid = paid;
+                s.remain = Math.max(0, total - paid);
+                s.month = document.getElementById('editStMonth').value.trim();
+                s.year = document.getElementById('editStYear').value.trim();
+
+                StorageManager.saveState(AppState);
+                refreshAllViews();
+                document.getElementById('editStudentModal').classList.remove('active');
+                Utils.toast('تم تحديث بيانات الطالب بنجاح', 'success');
+            };
+
+            const refreshAllViews = () => {
+                updateDashboard();
+                renderStudentsTable(document.getElementById('studentSearch').value);
+                updatePreview();
+                if (AppState.currentReportData.length > 0) {
+                    generateReport();
+                } else {
+                    AppState.currentReportData = AppState.students;
+                    renderReportTable(AppState.students);
+                }
+            };
+
+            // --- Bulletproof Event Binding ---
+            const bindEvents = () => {
+                const getEl = (id) => document.getElementById(id);
+
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.tab-btn, .tab-content').forEach(el => el.classList.remove('active'));
+                        this.classList.add('active');
+                        const target = getEl(this.dataset.tab);
+                        if (target) target.classList.add('active');
+                    });
+                });
+
+                const analyzeBtn = getEl('analyzeExcelBtn');
+                if (analyzeBtn) {
+                    analyzeBtn.addEventListener('click', () => {
+                        const fi = getEl('fileInput');
+                        if (!fi || fi.files.length === 0) {
+                            Utils.toast('يرجى اختيار ملف Excel أولاً', 'warning');
+                            return;
+                        }
+                        analyzeExcelFile(fi.files[0]);
+                    });
+                }
+
+                const closeMap = getEl('closeMappingModal');
+                if (closeMap) closeMap.addEventListener('click', () => getEl('excelMappingModal').classList.remove('active'));
+                const cancelMap = getEl('cancelMappingBtn');
+                if (cancelMap) cancelMap.addEventListener('click', () => getEl('excelMappingModal').classList.remove('active'));
+                const confirmImp = getEl('confirmImportBtn');
+                if (confirmImp) confirmImp.addEventListener('click', confirmImportExecution);
+
+                const stSearch = getEl('studentSearch');
+                if (stSearch) stSearch.addEventListener('input', (e) => renderStudentsTable(e.target.value));
+                const refTable = getEl('refreshTable');
+                if (refTable) refTable.addEventListener('click', () => {
+                    if (stSearch) stSearch.value = '';
+                    renderStudentsTable();
+                });
+
+                const selAll = getEl('selectAllStudents');
+                if (selAll) selAll.addEventListener('change', (e) => {
+                    document.querySelectorAll('.student-check').forEach(cb => cb.checked = e.target.checked);
+                });
+
+                document.querySelectorAll('.variable-hint').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        const editor = getEl('messageEditor');
+                        if (!editor) return;
+                        const v = chip.dataset.var;
+                        const pos = editor.selectionStart;
+                        const text = editor.value;
+                        editor.value = text.slice(0, pos) + v + text.slice(pos);
+                        editor.focus();
+                        updatePreview();
+                    });
+                });
+
+                const tempSelect = getEl('templateSelect');
+                if (tempSelect) tempSelect.addEventListener('change', (e) => {
+                    const editor = getEl('messageEditor');
+                    if (editor) {
+                        editor.value = e.target.value;
+                        updatePreview();
+                    }
+                });
+                const msgEd = getEl('messageEditor');
+                if (msgEd) msgEd.addEventListener('input', updatePreview);
+
+                const manualWa = getEl('openManualWaBtn');
+                if (manualWa) manualWa.addEventListener('click', () => {
+                    if (AppState.students.length === 0) {
+                        Utils.toast('لا توجد بيانات طلاب', 'warning');
+                        return;
+                    }
+                    const st = AppState.students[0];
+                    const pObj = Utils.normalizePhone(st.phone, AppState.settings.defaultCountryCode);
+                    const phone = pObj.isValid ? pObj.cleaned.replace('+', '') : st.phone;
+                    const msg = buildMessage(st, getEl('messageEditor') ? getEl('messageEditor').value : '');
+                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                    Utils.toast('فتح واتساب يدوي (احتياطي فقط)', 'info');
+                });
+
+                const testModalBtn = getEl('openTestModalBtn');
+                if (testModalBtn) testModalBtn.addEventListener('click', () => getEl('testNumberModal').classList.add('active'));
+                const closeTest = getEl('closeTestModal');
+                if (closeTest) closeTest.addEventListener('click', () => getEl('testNumberModal').classList.remove('active'));
+                const cancelTest = getEl('cancelTestModalBtn');
+                if (cancelTest) cancelTest.addEventListener('click', () => getEl('testNumberModal').classList.remove('active'));
+
+                const sendTestBtn = getEl('sendTestMsgBtn');
+                if (sendTestBtn) {
+                    sendTestBtn.addEventListener('click', async () => {
+                        const phone = getEl('testPhoneInput').value.trim();
+                        const msg = getEl('testMsgInput').value.trim();
+                        const channel = getEl('bulkChannel').value;
+                        if (!phone || !msg) {
+                            Utils.toast('يرجى إدخال رقم الهاتف ونص الرسالة', 'warning');
+                            return;
+                        }
+                        const res = await MessageService.send(channel, phone, msg, AppState.settings);
+                        if (res.success) {
+                            Utils.toast('نجح اختبار الإرسال: ' + res.messageId, 'success');
+                            getEl('testNumberModal').classList.remove('active');
+                        } else {
+                            Utils.toast('فشل اختبار الإرسال: ' + res.error, 'error');
+                        }
+                    });
+                }
+
+                const bulkFilter = getEl('bulkFilterType');
+                if (bulkFilter) {
+                    bulkFilter.addEventListener('change', (e) => {
+                        const val = e.target.value;
+                        const subCont = getEl('bulkSubFilterContainer');
+                        if (['class', 'amount', 'percent'].includes(val)) {
+                            subCont.style.display = 'block';
+                            getEl('bulkSubFilterLabel').textContent = val === 'class' ? 'اسم الصف' : (val === 'amount' ? 'أقل مبلغ متبقي' : 'أقصى نسبة سداد %');
+                        } else {
+                            subCont.style.display = 'none';
+                        }
+                    });
+                }
+
+                const openCampPrev = getEl('openCampaignPreviewModalBtn');
+                if (openCampPrev) {
+                    openCampPrev.addEventListener('click', () => {
+                        const channel = getEl('bulkChannel').value;
+                        const filterType = getEl('bulkFilterType').value;
+                        const filterVal = getEl('bulkSubFilterVal').value;
+                        const skipNotified = getEl('bulkSkipNotified').checked;
+                        const allowResend = getEl('bulkAllowResend').checked;
+
+                        let list = AppState.students;
+                        if (filterType === 'manual') {
+                            const selectedIds = Array.from(document.querySelectorAll('.student-check:checked')).map(cb => cb.dataset.id);
+                            list = list.filter(s => selectedIds.includes(s.id));
+                        } else {
+                            if (skipNotified && !allowResend) {
+                                list = list.filter(s => !s.notified);
+                            }
+                            if (filterType === 'unpaid' || filterType === 'delayed') list = list.filter(s => s.remain > 0);
+                            else if (filterType === 'not_notified') list = list.filter(s => !s.notified);
+                            else if (filterType === 'class') list = list.filter(s => (s.class || '').toLowerCase().includes(filterVal.toLowerCase()));
+                            else if (filterType === 'amount') list = list.filter(s => s.remain > 50000);
+                            else if (filterType === 'percent') {
+                                const p = parseFloat(filterVal) || 0;
+                                list = list.filter(s => ((s.total > 0 ? (s.paid / s.total) * 100 : 0)) < p);
+                            }
+                        }
+
+                        let validCount = 0;
+                        let invalidCount = 0;
+                        let invalidNames = [];
+
+                        list.forEach(s => {
+                            const pObj = Utils.normalizePhone(s.phone, AppState.settings.defaultCountryCode);
+                            if (pObj.isValid) validCount++;
+                            else {
+                                invalidCount++;
+                                invalidNames.push(`${s.name} (${s.phone || 'بدون رقم'})`);
+                            }
+                        });
+
+                        getEl('modalCampChannel').textContent = channel.toUpperCase();
+                        getEl('modalCampTotal').textContent = list.length;
+                        getEl('modalCampValid').textContent = validCount;
+                        getEl('modalCampInvalid').textContent = invalidCount;
+
+                        const invDiv = getEl('invalidPhonesListPreview');
+                        if (invalidCount > 0) {
+                            invDiv.style.display = 'block';
+                            invDiv.innerHTML = `<strong>الأرقام غير الصالحة التي سيتم استبعادها (${invalidCount}):</strong><br>` + invalidNames.join(', ');
+                        } else {
+                            invDiv.style.display = 'none';
+                        }
+
+                        getEl('campaignPreviewModal').classList.add('active');
+                    });
+                }
+
+                const closeCampM = getEl('closeCampModal');
+                if (closeCampM) closeCampM.addEventListener('click', () => getEl('campaignPreviewModal').classList.remove('active'));
+                const cancelCampM = getEl('cancelCampModalBtn');
+                if (cancelCampM) cancelCampM.addEventListener('click', () => getEl('campaignPreviewModal').classList.remove('active'));
+
+                const execCamp = getEl('executeCampaignBtn');
+                if (execCamp) {
+                    execCamp.addEventListener('click', () => {
+                        getEl('campaignPreviewModal').classList.remove('active');
+                        const channel = getEl('bulkChannel').value;
+                        const filterType = getEl('bulkFilterType').value;
+                        const filterVal = getEl('bulkSubFilterVal').value;
+                        const skipNotified = getEl('bulkSkipNotified').checked;
+                        const allowResend = getEl('bulkAllowResend').checked;
+                        const template = getEl('messageEditor').value;
+
+                        BulkCampaignEngine.start(channel, filterType, filterVal, skipNotified, allowResend, template);
+                    });
+                }
+
+                const pauseC = getEl('pauseCampBtn');
+                if (pauseC) pauseC.addEventListener('click', BulkCampaignEngine.pause);
+                const resumeC = getEl('resumeCampBtn');
+                if (resumeC) resumeC.addEventListener('click', BulkCampaignEngine.resume);
+                const cancelC = getEl('cancelCampBtn');
+                if (cancelC) cancelC.addEventListener('click', BulkCampaignEngine.cancel);
+                const retryF = getEl('retryFailedBtn');
+                if (retryF) retryF.addEventListener('click', BulkCampaignEngine.retryFailed);
+
+                const testWa = getEl('testWaConnBtn');
+                if (testWa) {
+                    testWa.addEventListener('click', async () => {
+                        const res = await WhatsAppProvider.testConnection(AppState.settings);
+                        if (res.success) Utils.toast(res.statusText, 'success');
+                        else Utils.toast('فشل اختبار WhatsApp: ' + res.statusText, 'error');
+                    });
+                }
+
+                const testSms = getEl('testSmsConnBtn');
+                if (testSms) {
+                    testSms.addEventListener('click', async () => {
+                        const res = await SMSProvider.testConnection(AppState.settings);
+                        if (res.success) Utils.toast(res.statusText, 'success');
+                        else Utils.toast('فشل اختبار SMS: ' + res.statusText, 'error');
+                    });
+                }
+
+                const advBtn = getEl('advSearchBtn');
+                if (advBtn) {
+                    advBtn.addEventListener('click', () => {
+                        const name = getEl('advName').value.toLowerCase().trim();
+                        const guardian = getEl('advGuardian').value.toLowerCase().trim();
+                        const phone = getEl('advPhone').value.trim();
+                        const cls = getEl('advClass').value.toLowerCase().trim();
+                        const month = getEl('advMonth').value.toLowerCase().trim();
+                        const year = getEl('advYear').value.trim();
+                        const status = getEl('advStatus').value;
+                        const notifStatus = getEl('advNotifStatus').value;
+                        const phoneStatus = getEl('advPhoneStatus').value;
+
+                        const res = AppState.students.filter(s => {
+                            if (name && !s.name.toLowerCase().includes(name)) return false;
+                            if (guardian && !s.guardian.toLowerCase().includes(guardian)) return false;
+                            if (phone && !s.phone.includes(phone)) return false;
+                            if (cls && !s.class.toLowerCase().includes(cls)) return false;
+                            if (month && !s.month.toLowerCase().includes(month)) return false;
+                            if (year && !s.year.includes(year)) return false;
+                            
+                            if (status === 'fully_paid' && s.remain > 0) return false;
+                            if (status === 'delayed' && s.remain <= 0) return false;
+                            
+                            if (notifStatus === 'notified' && !s.notified) return false;
+                            if (notifStatus === 'not_notified' && s.notified) return false;
+
+                            const pObj = Utils.normalizePhone(s.phone, AppState.settings.defaultCountryCode);
+                            if (phoneStatus === 'valid' && !pObj.isValid) return false;
+                            if (phoneStatus === 'invalid' && pObj.isValid) return false;
+
+                            return true;
+                        });
+
+                        const tbody = getEl('advResultsBody');
+                        if (tbody) {
+                            tbody.innerHTML = res.map(s => {
+                                const ratio = s.total > 0 ? ((s.paid / s.total) * 100).toFixed(0) : 0;
+                                const stBadge = s.remain <= 0 ? '<span class="badge badge-success">مسدد</span>' : '<span class="badge badge-danger">متأخر</span>';
+                                return `
+                                    <tr>
+                                        <td>${Utils.escapeHTML(s.id)}</td>
+                                        <td>${Utils.escapeHTML(s.name)}</td>
+                                        <td>${Utils.escapeHTML(s.guardian)}</td>
+                                        <td dir="ltr">${Utils.escapeHTML(s.phone)}</td>
+                                        <td>${Utils.escapeHTML(s.class)}</td>
+                                        <td>${s.remain.toLocaleString()}</td>
+                                        <td>${ratio}%</td>
+                                        <td>${stBadge}</td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
+                        Utils.toast(`تم العثور على ${res.length} نتيجة بحث`, 'success');
+                    });
+                }
+
+                const advClr = getEl('advClearBtn');
+                if (advClr) {
+                    advClr.addEventListener('click', () => {
+                        document.querySelectorAll('#search input').forEach(i => i.value = '');
+                        document.querySelectorAll('#search select').forEach(s => s.value = 'all');
+                        const resB = getEl('advResultsBody');
+                        if (resB) resB.innerHTML = '';
+                    });
+                }
+
+                const repType = getEl('reportTypeSelect');
+                if (repType) {
+                    repType.addEventListener('change', (e) => {
+                        const val = e.target.value;
+                        const subInp = getEl('reportSubVal');
+                        if (subInp) {
+                            if (['class', 'month', 'amount', 'percent'].includes(val)) {
+                                subInp.style.display = 'block';
+                            } else {
+                                subInp.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+
+                const genRep = getEl('generateReportBtn');
+                if (genRep) genRep.addEventListener('click', generateReport);
+                
+                const expExc = getEl('exportExcelBtn');
+                if (expExc) {
+                    expExc.addEventListener('click', () => {
+                        Utils.toast('تصدير التقارير متاح عبر ملفات JSON الاحتياطية أو الطباعة', 'info');
+                    });
+                }
+
+                const printRep = getEl('printReportBtn');
+                if (printRep) {
+                    printRep.addEventListener('click', () => {
+                        getEl('printSchoolTitle').textContent = AppState.settings.schoolName;
+                        getEl('printAccName').textContent = AppState.settings.accountant;
+                        getEl('printTreasName').textContent = AppState.settings.treasurer;
+                        getEl('printReportDate').textContent = new Date().toLocaleString();
+
+                        const logoCont = getEl('printLogoContainer');
+                        if (logoCont) {
+                            if (AppState.settings.logoData) {
+                                logoCont.innerHTML = `<img src="${AppState.settings.logoData}" style="max-height:65px; object-fit:contain;" alt="شعار">`;
+                            } else {
+                                logoCont.innerHTML = '';
+                            }
+                        }
+
+                        const tbody = getEl('printReportBody');
+                        if (tbody) {
+                            tbody.innerHTML = AppState.currentReportData.map((s, idx) => {
+                                const ratio = s.total > 0 ? ((s.paid / s.total) * 100).toFixed(0) : 0;
+                                const statusStr = s.remain <= 0 ? 'مسدد بالكامل' : 'متأخر';
+                                return `
+                                    <tr>
+                                        <td>${idx + 1}</td>
+                                        <td>${Utils.escapeHTML(s.id)}</td>
+                                        <td>${Utils.escapeHTML(s.name)}</td>
+                                        <td>${Utils.escapeHTML(s.guardian)}</td>
+                                        <td dir="ltr">${Utils.escapeHTML(s.phone)}</td>
+                                        <td>${Utils.escapeHTML(s.class)}</td>
+                                        <td>${s.total.toLocaleString()}</td>
+                                        <td>${s.paid.toLocaleString()}</td>
+                                        <td>${s.remain.toLocaleString()}</td>
+                                        <td>${ratio}%</td>
+                                        <td>${s.whatsappSent ? '✅' : '❌'}</td>
+                                        <td>${s.smsSent ? '✅' : '❌'}</td>
+                                        <td>${statusStr}</td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
+
+                        getEl('printReportArea').classList.add('active');
+                        window.print();
+                        getEl('printReportArea').classList.remove('active');
+                    });
+                }
+
+                const closeEd = getEl('closeEditModal');
+                if (closeEd) closeEd.addEventListener('click', () => getEl('editStudentModal').classList.remove('active'));
+                const cancelEd = getEl('cancelEditBtn');
+                if (cancelEd) cancelEd.addEventListener('click', () => getEl('editStudentModal').classList.remove('active'));
+                const saveEdSt = getEl('saveEditStudentBtn');
+                if (saveEdSt) saveEdSt.addEventListener('click', saveStudentEdit);
+
+                const saveSet = getEl('saveSettingsBtn');
+                if (saveSet) {
+                    saveSet.addEventListener('click', () => {
+                        AppState.settings.schoolName = getEl('setSchoolName').value.trim();
+                        AppState.settings.accountant = getEl('setAccountant').value.trim();
+                        AppState.settings.treasurer = getEl('setTreasurer').value.trim();
+                        AppState.settings.defaultCountryCode = getEl('setDefaultCountryCode').value.trim() || '+967';
+                        
+                        AppState.settings.backendUrl = getEl('setBackendUrl').value.trim();
+                        AppState.settings.testMode = getEl('setTestMode').value === 'true';
+
+                        AppState.settings.waPhoneId = getEl('setWaPhoneId').value.trim();
+                        AppState.settings.waToken = getEl('setWaToken').value.trim();
+                        AppState.settings.waBizId = getEl('setWaBizId').value.trim();
+                        AppState.settings.waTemplate = getEl('setWaTemplate').value.trim();
+                        AppState.settings.waLang = getEl('setWaLang').value.trim() || 'ar';
+
+                        AppState.settings.smsProvider = getEl('setSmsProvider').value.trim();
+                        AppState.settings.smsUrl = getEl('setSmsUrl').value.trim();
+                        AppState.settings.smsKey = getEl('setSmsKey').value.trim();
+                        AppState.settings.smsSender = getEl('setSmsSender').value.trim();
+
+                        AppState.settings.batchSize = parseInt(getEl('setBatchSize').value) || 5;
+                        AppState.settings.batchDelay = parseInt(getEl('setBatchDelay').value) || 1000;
+
+                        StorageManager.saveState(AppState);
+                        getEl('headerSchoolName').innerHTML = `<i class="fas fa-school"></i> ${Utils.escapeHTML(AppState.settings.schoolName)}`;
+                        Utils.toast('تم حفظ جميع الإعدادات وربط المزودين بنجاح', 'success');
+                    });
+                }
+
+                const logoUp = getEl('setLogoUpload');
+                if (logoUp) {
+                    logoUp.addEventListener('change', (e) => {
+                        const f = e.target.files[0];
+                        if (f) {
+                            const r = new FileReader();
+                            r.onload = (ev) => {
+                                AppState.settings.logoData = ev.target.result;
+                                StorageManager.saveState(AppState);
+                                updateLogoPreview();
+                                Utils.toast('تم رفع الشعار بنجاح', 'success');
+                            };
+                            r.readAsDataURL(f);
+                        }
+                    });
+                }
+
+                const rmLogo = getEl('setRemoveLogoBtn');
+                if (rmLogo) {
+                    rmLogo.addEventListener('click', () => {
+                        AppState.settings.logoData = '';
+                        StorageManager.saveState(AppState);
+                        updateLogoPreview();
+                        Utils.toast('تم إزالة الشعار', 'info');
+                    });
+                }
+
+                const bkpBtn = getEl('backupDataBtn');
+                if (bkpBtn) {
+                    bkpBtn.addEventListener('click', () => {
+                        const backupObj = {
+                            version: "4.3",
+                            createdAt: new Date().toISOString(),
+                            studentsCount: AppState.students.length,
+                            logsCount: AppState.logs.length,
+                            students: AppState.students,
+                            logs: AppState.logs,
+                            settings: AppState.settings
+                        };
+                        const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: 'application/json' });
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = `Backup_School_V4.3_${new Date().toISOString().slice(0,10)}.json`;
+                        a.click();
+                        Utils.toast('تم تصدير النسخة الاحتياطية بنجاح', 'success');
+                    });
+                }
+
+                const rstBtn = getEl('restoreDataBtn');
+                if (rstBtn) rstBtn.addEventListener('click', () => getEl('restoreFileInput').click());
+
+                const rstFile = getEl('restoreFileInput');
+                if (rstFile) {
+                    rstFile.addEventListener('change', (e) => {
+                        const f = e.target.files[0];
+                        if (!f) return;
+                        if (!confirm('سيتم استبدال البيانات الحالية بالكامل، هل تريد المتابعة؟ (سيتم حفظ نسخة احتياطية تلقائية أولاً)')) return;
+
+                        const autoBackup = {
+                            version: "4.3",
+                            createdAt: new Date().toISOString(),
+                            autoBackupBeforeRestore: true,
+                            students: AppState.students,
+                            logs: AppState.logs,
+                            settings: AppState.settings
+                        };
+                        localStorage.setItem('school_autobackup_before_restore', JSON.stringify(autoBackup));
+
+                        const r = new FileReader();
+                        r.onload = (ev) => {
+                            try {
+                                const parsed = JSON.parse(ev.target.result);
+                                if (!parsed.students || !Array.isArray(parsed.students)) {
+                                    throw new Error('ملف النسخة الاحتياطية غير صالح (فقدان مصفوفة الطلاب)');
+                                }
+                                AppState.students = parsed.students;
+                                AppState.logs = parsed.logs || [];
+                                if (parsed.settings) AppState.settings = { ...AppState.settings, ...parsed.settings };
+
+                                StorageManager.saveState(AppState);
+                                initSettingsUI();
+                                refreshAllViews();
+                                Utils.toast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
+                            } catch (err) {
+                                Utils.toast('خطأ في استعادة النسخة: ' + err.message, 'error');
+                            }
+                        };
+                        r.readAsText(f);
+                    });
+                }
+
+                const clrLogs = getEl('clearLogsBtn');
+                if (clrLogs) {
+                    clrLogs.addEventListener('click', () => {
+                        if (confirm('هل أنت متأكد من مسح سجل العمليات بالكامل؟')) {
+                            AppState.logs = [];
+                            StorageManager.saveState(AppState);
+                            renderLogsTable();
+                            Utils.toast('تم مسح السجل', 'info');
+                        }
+                    });
+                }
+            };
+
+            const renderLogsTable = () => {
+                const tbody = document.getElementById('logsBody');
+                if (!tbody) return;
+                const logs = AppState.logs;
+
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="padding:25px;">لا توجد سجلات عمليات مسجلة</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = logs.slice().reverse().map(l => {
+                    let badgeClass = 'badge';
+                    if (l.status === 'sent') badgeClass = 'badge badge-success';
+                    else if (l.status === 'failed') badgeClass = 'badge badge-danger';
+                    else if (l.status === 'opened') badgeClass = 'badge badge-warning';
+
+                    return `
+                        <tr>
+                            <td>${Utils.escapeHTML(l.campaignId)}</td>
+                            <td>${Utils.escapeHTML(l.studentId)}</td>
+                            <td>${Utils.escapeHTML(l.studentName)}</td>
+                            <td dir="ltr">${Utils.escapeHTML(l.phone)}</td>
+                            <td>${Utils.escapeHTML(l.type)}</td>
+                                                        <td><span class="${badgeClass}">${Utils.escapeHTML(l.status)}</span></td>
+                            <td dir="ltr">${Utils.escapeHTML(l.date)}</td>
+                            <td>${Utils.escapeHTML(l.reason)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            };
+
+            const updateLogoPreview = () => {
+                const prev = document.getElementById('setLogoPreview');
+                if (!prev) return;
+                if (AppState.settings.logoData) {
+                    prev.src = AppState.settings.logoData;
+                    prev.style.display = 'block';
+                } else {
+                    prev.style.display = 'none';
+                }
+            };
+
+            const initSettingsUI = () => {
+                const getEl = (id) => document.getElementById(id);
+                if (getEl('setSchoolName')) getEl('setSchoolName').value = AppState.settings.schoolName || '';
+                if (getEl('setAccountant')) getEl('setAccountant').value = AppState.settings.accountant || '';
+                if (getEl('setTreasurer')) getEl('setTreasurer').value = AppState.settings.treasurer || '';
+                if (getEl('setDefaultCountryCode')) getEl('setDefaultCountryCode').value = AppState.settings.defaultCountryCode || '+967';
+                
+                if (getEl('setBackendUrl')) getEl('setBackendUrl').value = AppState.settings.backendUrl || '';
+                if (getEl('setTestMode')) getEl('setTestMode').value = String(!!AppState.settings.testMode);
+
+                if (getEl('setWaPhoneId')) getEl('setWaPhoneId').value = AppState.settings.waPhoneId || '';
+                if (getEl('setWaToken')) getEl('setWaToken').value = AppState.settings.waToken || '';
+                if (getEl('setWaBizId')) getEl('setWaBizId').value = AppState.settings.waBizId || '';
+                if (getEl('setWaTemplate')) getEl('setWaTemplate').value = AppState.settings.waTemplate || '';
+                if (getEl('setWaLang')) getEl('setWaLang').value = AppState.settings.waLang || 'ar';
+
+                if (getEl('setSmsProvider')) getEl('setSmsProvider').value = AppState.settings.smsProvider || '';
+                if (getEl('setSmsUrl')) getEl('setSmsUrl').value = AppState.settings.smsUrl || '';
+                if (getEl('setSmsKey')) getEl('setSmsKey').value = AppState.settings.smsKey || '';
+                if (getEl('setSmsSender')) getEl('setSmsSender').value = AppState.settings.smsSender || '';
+
+                if (getEl('setBatchSize')) getEl('setBatchSize').value = AppState.settings.batchSize || 5;
+                if (getEl('setBatchDelay')) getEl('setBatchDelay').value = AppState.settings.batchDelay || 1000;
+
+                const headerSch = getEl('headerSchoolName');
+                if (headerSch) headerSch.innerHTML = `<i class="fas fa-school"></i> ${Utils.escapeHTML(AppState.settings.schoolName)}`;
+                updateLogoPreview();
+            };
+
+            const init = () => {
+                initSettingsUI();
+                const msgEd = document.getElementById('messageEditor');
+                const tempSel = document.getElementById('templateSelect');
+                if (msgEd && tempSel) msgEd.value = tempSel.value;
+                AppState.currentReportData = AppState.students;
+                
+                refreshAllViews();
+                renderLogsTable();
+                bindEvents();
+
+                console.log('Nizam Al-Qimam V4.3 Initialized Successfully.');
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
